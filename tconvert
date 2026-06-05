@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --- VERSION CONTROL ---
-VERSION="1.0.6"
+VERSION="2.0.0"
 REPO_URL="https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert"
 
 BOLD='\033[1m'
@@ -32,7 +32,7 @@ printf "${WHITE}Introducing TConvert, the world’s most private and lightning-f
 printf " Designed with :   ${BOLD}Mohamed Mohsen${NC} & the amazing open-source community!  ❤️\n\n"
 printf " GitHub :          ${CYAN}https://github.com/mohamedmohsenofficial/tconvert${NC}\n\n"
 printf " LinkedIn :        ${CYAN}https://linkedin.com/in/mohamedmohsenofficial${NC}\n\n"
-printf " Version :         ${YELLOW}v${VERSION}${NC}\n\n"
+printf " Version :         ${YELLOW}v${VERSION} (With Python Data Engine 🐍)${NC}\n\n"
 sleep 0.5
 
 printf "${CYAN}Checking for updates... ${NC}"
@@ -65,7 +65,7 @@ else
     printf "${GREEN}Up to date 😊${NC}\n\n"
 fi
 
-CHECK_FILE="$HOME/.tconvert_deps_checked"
+CHECK_FILE="$HOME/.tconvert_deps_checked_v2"
 
 if [ ! -f "$CHECK_FILE" ]; then
   printf "${CYAN}🔍 Running System Health Check...${NC} "
@@ -76,7 +76,8 @@ if [ ! -f "$CHECK_FILE" ]; then
   if ! command -v magick &> /dev/null; then MISSING_DEPS+=("imagemagick (For Images)"); fi
   if ! command -v libreoffice &> /dev/null; then MISSING_DEPS+=("libreoffice (For Documents)"); fi
   if ! command -v ebook-convert &> /dev/null; then MISSING_DEPS+=("calibre (For E-books)"); fi
-  if ! command -v pandoc &> /dev/null; then MISSING_DEPS+=("pandoc (For Text/Markdown)"); fi
+  if ! command -v pandoc &> /dev/null; then MISSING_DEPS+=("pandoc (For Text)"); fi
+  if ! python3 -c "import pandas" &> /dev/null; then MISSING_DEPS+=("python3-pandas (For Data: JSON, Parquet, etc)"); fi
 
   if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
     printf "\n\n${YELLOW}⚠️ NOTICE: SOME ENGINES ARE MISSING${NC}\n"
@@ -86,6 +87,7 @@ if [ ! -f "$CHECK_FILE" ]; then
       printf " ❌ ${RED}%s${NC}\n" "$dep"
     done
     
+    printf "\n${GRAY}(Tip for Data Engine: pip install pandas openpyxl pyarrow lxml)${NC}\n"
     printf "\n🤔 Do you want to continue with the installed engines only? (y/n): "
     read CONTINUE_CHOICE
     
@@ -116,7 +118,6 @@ if [ ! -f "$FILE" ]; then
   exit 1
 fi
 
-# SAFE EXTENSION EXTRACTION (Supports tar.gz, tar.xz)
 LOWER_FILE=$(echo "$FILE" | tr '[:upper:]' '[:lower:]')
 if [[ "$LOWER_FILE" == *.tar.gz ]]; then
   EXT="tar.gz"
@@ -139,23 +140,24 @@ EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
 TYPE=""
 declare -a SUGGESTIONS
 
-# Bulletproof Engine Mapping (Strictly what we can convert NOW)
+# Bulletproof Engine Mapping
 case "$EXT" in
   pdf|pdf/a)
     TYPE="document"
-    SUGGESTIONS=(jpg png bmp tiff webp) # Magick extracts PDF pages to images
+    SUGGESTIONS=(docx epub html txt jpg png bmp tiff)
     ;;
   doc|docx|odt)
     TYPE="document"
     SUGGESTIONS=(pdf odt html txt epub rtf)
     ;;
-  xls|xlsx|ods|csv|tsv)
-    TYPE="spreadsheet"
-    SUGGESTIONS=(pdf xlsx ods csv html txt)
-    ;;
   ppt|pptx|odp)
     TYPE="presentation"
     SUGGESTIONS=(pdf odp html txt)
+    ;;
+  # THE NEW DATA SECTION (Powered by Python Pandas)
+  xls|xlsx|ods|csv|tsv|json|jsonl|parquet|xml)
+    TYPE="data"
+    SUGGESTIONS=(csv tsv json jsonl parquet xlsx html md xml pdf)
     ;;
   mp4|mkv|avi|mov|webm|flv|wmv|3gp|ts|m4v|mpeg|ogv|asf|f4v)
     TYPE="video"
@@ -173,7 +175,7 @@ case "$EXT" in
     TYPE="ebook"
     SUGGESTIONS=(azw3 docx epub fb2 html lrf mobi odt pdb pdf rtf snb txt)
     ;;
-  md|txt|rtf|adoc|xml|tex)
+  md|txt|rtf|adoc|tex)
     TYPE="text"
     SUGGESTIONS=(adoc docx epub html md odt pdf rtf tex txt)
     ;;
@@ -183,7 +185,7 @@ case "$EXT" in
     ;;
   *)
     TYPE="unknown"
-    SUGGESTIONS=(mp4 mp3 jpg pdf zip docx png mkv csv html)
+    SUGGESTIONS=(mp4 mp3 jpg pdf zip docx png mkv csv json)
     ;;
 esac
 
@@ -397,15 +399,89 @@ elif [[ " zip cbz tar tar.gz tar.bz2 tar.xz tgz " =~ " $TARGET_EXT " ]]; then
 elif [[ " epub mobi azw3 fb2 kepub lrf pdb snb " =~ " $TARGET_EXT " ]] || [[ "$TYPE" == "ebook" && " epub mobi azw3 fb2 kepub lrf pdb snb docx rtf txt pdf " =~ " $TARGET_EXT " ]]; then
   CMD="ebook-convert \"$FILE\" \"$OUTPUT_FILE\""
 
-# 5. Pandoc & LibreOffice (Documents, Spreadsheets, Text)
-elif [[ " docx odt xlsx ods csv tsv pptx odp pdf html xml rtf txt md tex " =~ " $TARGET_EXT " ]]; then
+# 5. Pandoc & LibreOffice (Documents, Presentations, simple text)
+elif [[ " docx odt pptx odp pdf rtf tex " =~ " $TARGET_EXT " ]] && [[ "$TYPE" != "data" ]]; then
   if [[ "$TYPE" == "text" ]]; then
     CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
   else
-    printf "${MAGENTA}🔄 Converting document/spreadsheet...${NC}\n"
+    printf "${MAGENTA}🔄 Converting document...${NC}\n"
     CMD="libreoffice --headless --convert-to $TARGET_EXT --outdir . \"$FILE\""
     OUTPUT_FILE="${FILENAME}.${TARGET_EXT}"
   fi
+
+# 6. PYTHON DATA ENGINE (The 8000+ Formats Secret Weapon) 🐍
+elif [[ "$TYPE" == "data" ]] || [[ " csv tsv json jsonl parquet xlsx xml html md " =~ " $TARGET_EXT " ]]; then
+  printf "${MAGENTA}🐍 Firing up Python Data Engine...${NC}\n"
+  
+  PYTHON_SCRIPT="/tmp/tconvert_data_engine.py"
+  # Embedding Python code inside the Bash script dynamically
+  cat << 'EOF' > "$PYTHON_SCRIPT"
+import sys
+try:
+    import pandas as pd
+except ImportError:
+    print("❌ Error: Pandas library is not installed. Please run: pip install pandas openpyxl pyarrow lxml")
+    sys.exit(1)
+
+def convert(input_path, output_path):
+    ext_in = input_path.split('.')[-1].lower()
+    ext_out = output_path.split('.')[-1].lower()
+    
+    try:
+        # Read the Data
+        if ext_in in ['csv']:
+            df = pd.read_csv(input_path)
+        elif ext_in in ['tsv']:
+            df = pd.read_csv(input_path, sep='\t')
+        elif ext_in == 'json':
+            try: df = pd.read_json(input_path)
+            except: df = pd.read_json(input_path, lines=True)
+        elif ext_in == 'jsonl':
+            df = pd.read_json(input_path, lines=True)
+        elif ext_in in ['xls', 'xlsx']:
+            df = pd.read_excel(input_path)
+        elif ext_in == 'parquet':
+            df = pd.read_parquet(input_path)
+        elif ext_in == 'xml':
+            df = pd.read_xml(input_path)
+        elif ext_in == 'html':
+            df = pd.read_html(input_path)[0]
+        else:
+            print(f"❌ Unsupported input data format: {ext_in}")
+            sys.exit(1)
+            
+        # Write the Data
+        if ext_out == 'csv':
+            df.to_csv(output_path, index=False)
+        elif ext_out == 'tsv':
+            df.to_csv(output_path, sep='\t', index=False)
+        elif ext_out == 'json':
+            df.to_json(output_path, orient='records', indent=4)
+        elif ext_out == 'jsonl':
+            df.to_json(output_path, orient='records', lines=True)
+        elif ext_out == 'xlsx':
+            df.to_excel(output_path, index=False)
+        elif ext_out == 'parquet':
+            df.to_parquet(output_path, index=False)
+        elif ext_out == 'xml':
+            df.to_xml(output_path, index=False)
+        elif ext_out == 'html':
+            df.to_html(output_path, index=False)
+        elif ext_out == 'md':
+            df.to_markdown(output_path, index=False)
+        else:
+            print(f"❌ Unsupported output data format: {ext_out}")
+            sys.exit(1)
+    except Exception as e:
+        print(f"❌ Data Engine Error: {str(e)}")
+        print("💡 Ensure you have required libraries: pip install pandas openpyxl pyarrow lxml")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    convert(sys.argv[1], sys.argv[2])
+EOF
+
+  CMD="python3 \"$PYTHON_SCRIPT\" \"$FILE\" \"$OUTPUT_FILE\""
 
 else
   printf "${RED}❌ Error: Format engine routing failed. Target format not currently supported.${NC}\n"
@@ -475,7 +551,7 @@ if [ $EXIT_CODE -eq 0 ]; then
   printf "\n${GREEN}🎉 Conversion Completed Successfully!${NC}\n\n"
   printf "${WHITE}📄 Output File:${NC}\n"
   printf "${BOLD}${BLUE}%s${NC}\n\n" "$OUTPUT_FILE"
-  rm -f "$ERROR_LOG" "$FFMPEG_LOG"
+  rm -f "$ERROR_LOG" "$FFMPEG_LOG" "/tmp/tconvert_data_engine.py"
 else
   printf "\n${RED}❌ Error: Conversion failed.${NC}\n\n"
   printf "Check details below:\n"
