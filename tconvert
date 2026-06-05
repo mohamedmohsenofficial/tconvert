@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --- VERSION CONTROL ---
-VERSION="1.0.2"
+VERSION="1.0.3"
 REPO_URL="https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert"
 
 BOLD='\033[1m'
@@ -165,9 +165,9 @@ case "$EXT" in
     TYPE="text"
     SUGGESTIONS=(adoc docx epub html ipynb md muse odt opml org pdf pptx rst rtf tex textile txt)
     ;;
-  zip|rar|7z|tar*)
+  zip|cbz|tar|tar.gz|tar.bz2|tar.xz|tgz)
     TYPE="archive"
-    SUGGESTIONS=(7z cbz tar tar.bz2 tar.gz tar.xz tar.zst zip)
+    SUGGESTIONS=(zip cbz tar tar.gz tar.bz2 tar.xz)
     ;;
   eml|msg)
     TYPE="email"
@@ -196,7 +196,6 @@ COMP_METHOD=""
 if [ "$ACTION_CHOICE" == "1" ]; then
   printf "${BOLD}${WHITE}📌 Suggested formats for this file:${NC}\n\n"
   
-  # Dynamic numbering format: 1. 2. 3.
   for i in "${!SUGGESTIONS[@]}"; do
     printf "  %d. %s\n" $((i+1)) "${SUGGESTIONS[$i]}"
   done
@@ -366,6 +365,40 @@ elif [[ " epub mobi azw3 fb2 kepub lrf pdb snb " =~ " $TARGET_EXT " ]]; then
 elif [[ " md txt rtf html adoc ipynb muse opml org tex textile xml " =~ " $TARGET_EXT " ]]; then
   # PANDOC ENGINE
   CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
+
+elif [[ " zip cbz tar tar.gz tar.bz2 tar.xz tgz " =~ " $TARGET_EXT " ]]; then
+  # NATIVE LINUX ARCHIVE ENGINE (zip, unzip, tar)
+  ABS_FILE="$PWD/$FILE"
+  ABS_OUTPUT="$PWD/$OUTPUT_FILE"
+  
+  CMD="TEMP_DIR=\$(mktemp -d) && "
+  
+  # Step 1: Extract based on input format
+  if [[ "$EXT" == "zip" || "$EXT" == "cbz" ]]; then
+    CMD+="unzip -q \"\$ABS_FILE\" -d \"\$TEMP_DIR\" && "
+  elif [[ "$EXT" == "tar" ]]; then
+    CMD+="tar -xf \"\$ABS_FILE\" -C \"\$TEMP_DIR\" && "
+  elif [[ "$EXT" == "tar.gz" || "$EXT" == "tgz" ]]; then
+    CMD+="tar -xzf \"\$ABS_FILE\" -C \"\$TEMP_DIR\" && "
+  elif [[ "$EXT" == "tar.bz2" ]]; then
+    CMD+="tar -xjf \"\$ABS_FILE\" -C \"\$TEMP_DIR\" && "
+  elif [[ "$EXT" == "tar.xz" ]]; then
+    CMD+="tar -xJf \"\$ABS_FILE\" -C \"\$TEMP_DIR\" && "
+  fi
+
+  # Step 2: Compress based on Target format
+  CMD+="(cd \"\$TEMP_DIR\" && "
+  if [[ "$TARGET_EXT" == "zip" || "$TARGET_EXT" == "cbz" ]]; then
+    CMD+="zip -rq \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
+  elif [[ "$TARGET_EXT" == "tar" ]]; then
+    CMD+="tar -cf \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
+  elif [[ "$TARGET_EXT" == "tar.gz" || "$TARGET_EXT" == "tgz" ]]; then
+    CMD+="tar -czf \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
+  elif [[ "$TARGET_EXT" == "tar.bz2" ]]; then
+    CMD+="tar -cjf \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
+  elif [[ "$TARGET_EXT" == "tar.xz" ]]; then
+    CMD+="tar -cJf \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
+  fi
 
 else
   printf "${RED}❌ Error: Format engine routing failed. Try a standard format.${NC}\n"
