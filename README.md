@@ -142,6 +142,6 @@ If you enjoy this tool and it saves you time, consider supporting the developmen
 
 <div align="center">
   <b>Created with 💙 by Mohsen</b><br>
-  <i>Transforming your terminal, one file at a time.</i><br>
+  Transforming your terminal, one file at a time.<br>
   Love you guys 🤟🏼😘
 </div>
