@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="🎭 Pic.png" alt="TConvert Logo" width="250">
+  <img src="Images/Tconvert.png" alt="TConvert Logo" width="250">
 
 # 🎭 TConvert - Universal File Converter
 </div>
