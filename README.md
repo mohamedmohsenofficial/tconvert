@@ -1,45 +1,62 @@
-# 🚀 TConvert - Universal File Converter
+# 🎭 TConvert - Universal File Converter
 
 ![Version](https://img.shields.io/badge/Version-1.0.0-orange?style=for-the-badge)
 ![Bash](https://img.shields.io/badge/Language-Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Open Source](https://img.shields.io/badge/Open_Source-Yes-success?style=for-the-badge)
 
-Introducing **TConvert**, the world’s most private and lightning-fast local file converter. It empowers you to convert absolutely any file type in mere seconds with just 4 keystrokes—100% free, and with no need to install complex, resource-heavy, or bloated software. By running entirely offline directly on your personal machine, TConvert guarantees maximum security and absolute privacy for your data. It’s so secure and reliable, you could comfortably process Obama and Trump's classified work files on it without batting an eye!
+Introducing **TConvert**, the world’s most private and lightning-fast local file converter. It empowers you to convert absolutely any file type in mere seconds with just 4 keystrokes—100% free, and with no need to install complex, resource-heavy, or bloated software. 
 
-**TConvert** is a powerful, interactive, and user-friendly command-line tool designed to convert and compress almost any file type (Videos, Audio, Images, Documents, and E-books). 
+By running entirely offline directly on your personal machine, TConvert guarantees maximum security and absolute privacy for your data. It’s so secure and reliable, you could comfortably process Obama and Trump's classified work files on it without batting an eye! 🛡️
 
-Crafted to save time, cure "Terminal Phobia," and make the CLI your best friend!* This script is the ultimate lightweight replacement for heavy GUI software and massive Docker containers.
+---
+
+## 🌟 Why Choose TConvert?
+People choose TConvert because it solves the biggest problems with modern converters:
+* 🔒 **Absolute Privacy:** Your files never leave your computer. No sketchy online uploads, no data collection.
+* 🧠 **No Memorization Needed:** Forget about complex `ffmpeg` or `magick` terminal commands. TConvert asks you simple questions and builds the complex commands under the hood.
+* ⚡ **Blazing Fast:** No heavy GUI (Graphical User Interface) draining your RAM or CPU. It communicates directly with your system's core.
+* 🪶 **Featherweight:** A ~15 KB script that replaces gigabytes of heavy desktop applications and docker containers.
 
 ---
 
 ## ⚠️ CRITICAL NOTICE: DEPENDENCIES REQUIRED FIRST
-`TConvert` acts as a highly intelligent central commander for your system's existing conversion engines. **Nothing will work if you do not install the required libraries first.** You **MUST** install the following open-source engines on your system before running the tool:
+`TConvert` acts as a highly intelligent central commander for your system's existing conversion engines. **Nothing will work if you do not install the required libraries first.** You MUST install the following open-source engines on your system before running the tool:
+
 * `ffmpeg` (For Video & Audio processing)
 * `imagemagick` (For Image processing)
 * `libreoffice` (For Documents & Spreadsheets)
 * `calibre` (For E-books)
 * `pandoc` (For Text/Markdown files)
 
-**To install all dependencies on Debian/Ubuntu, run:**
+**Debian/Ubuntu (apt):**
 ```bash
 sudo apt update
 sudo apt install ffmpeg imagemagick libreoffice calibre pandoc
 
 ```
 
-*(You can replace the link below with your actual tutorial GIF/Video link showing the installation process)*
+**Fedora/RHEL (dnf):**
 
+```bash
+sudo dnf install ffmpeg ImageMagick libreoffice calibre pandoc
+
+```
+
+**Arch Linux (pacman):**
+
+```bash
+sudo pacman -S ffmpeg imagemagick libreoffice-fresh calibre pandoc
+
+```
 
 ---
 
-## 🏆 Why TConvert? (Comparison)
+## 🏆 TConvert vs. The Rest
 
-TConvert replaces gigabytes of heavy tools with a single script. Here is how it compares to other common solutions:
-
-| Feature | 🚀 TConvert (This Tool) | 🐳 Docker Solutions (e.g., Transmute) | 🖥️ GUI Apps (e.g., Handbrake) | ☁️ Online Converters |
+| Feature | 🎭 TConvert | 🐳 Docker Solutions | 🖥️ GUI Apps | ☁️ Online Converters |
 | --- | --- | --- | --- | --- |
-| **Storage Size** | **~10 KB** | ~5.0 GB | ~100+ MB | 0 MB |
+| **Storage Size** | **~15 KB** | ~5.0 GB | ~100+ MB | 0 MB |
 | **Offline Use** | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
 | **All-in-One Capability** | ✅ Yes (All files) | ✅ Yes (All files) | ❌ No (Media only) | ✅ Yes |
 | **Speed & Performance** | ⚡ Native & Fast | 🐢 Containerized overhead | ⚡ Native | 🐌 Depends on internet |
@@ -61,15 +78,6 @@ TConvert automatically detects your file type and routes it to the correct engin
 | 📝 **Text** | `md`, `txt`, `rtf` | `Pandoc` |
 
 *(Note: You can type manual extensions outside this list, and TConvert will try its best to process them!)*
-
----
-
-## ✨ Key Features
-
-* **📊 Real-time Progress Bar:** Watch the conversion progress with a dynamic, real-time percentage bar for media files.
-* **🗜️ Smart Compression:** Compress files by a specific percentage (%) or target size (MB).
-* **🎨 Beautiful UI:** Red and white themed terminal interface with emojis, blinking indicators, and clean ASCII art.
-* **🧠 Auto-Suggestions:** The tool suggests the best formats based on your input file type.
 
 ---
 
@@ -103,36 +111,20 @@ tconvert
 **The interactive menu will guide you step-by-step:**
 
 1. Enter your file name (e.g., `video.mp4`).
-2. Choose to **Convert to a new format** or **Compress Only**.
+2. Choose to **Convert** or **Compress**.
 3. Select your target format from a numbered list.
-4. Set your desired compression method and level (Optional).
-5. Sit back and watch the animated progress bar!
+4. Set your desired compression method (By % or MB).
+5. Sit back and watch the beautiful, real-time progress bar!
 
 ---
-
-## 🤝 Contributing
-
-Open-source project powered by the community! Open Issue or Pull Request for:
-
-* Support for new file formats and conversion engines
-* Terminal UI & animation improvements
-* Code optimization and speed enhancements
-* Cross-platform compatibility improvements
-
-------
 
 ## 📜 License & Credits
 
-- **MIT License:** Free to use, modify, and distribute.
-- **GitHub:** [@mohamedmohsenofficial](https://github.com/mohamedmohsenofficial)
-- **LinkedIn:** [Mohamed Mohsen](https://www.linkedin.com/in/mohamedmohsenofficial)
+* **MIT License:** Free to use, modify, and distribute.
+* **GitHub:** [@mohamedmohsenofficial](https://github.com/mohamedmohsenofficial)
+* **LinkedIn:** [Mohamed Mohsen](https://www.google.com/search?q=https://www.linkedin.com/in/mohamedmohsenofficial)
 
 ---
-
-## 🔥 Final Words
-
-Start your **terminal revolution today!** 🎯    
-Turn boring terminal commands into a lightning-fast, visually motivating conversion journey!
 
 ## 💖 Support
 
