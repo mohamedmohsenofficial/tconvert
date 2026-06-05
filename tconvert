@@ -1,15 +1,9 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# Script Name: TConvert (Universal File Converter)
-# Purpose:     Crafted to save time, cure "Terminal Phobia", and make the CLI
-#              your best friend. Open for everyone to learn, review & improve!
-# ==============================================================================
 
 # --- VERSION CONTROL ---
-VERSION="1.0.1"
+VERSION="1.0.2"
 REPO_URL="https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert"
 
-# Terminal colors and styles
 BOLD='\033[1m'
 RED='\033[1;31m'
 WHITE='\033[1;37m'
@@ -19,12 +13,10 @@ GREEN='\033[1;32m'
 BLUE='\033[1;34m'
 CYAN='\033[1;36m'
 MAGENTA='\033[1;35m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Clear screen for a fresh look
 clear
 
-# Giant ASCII Art Title
 printf "${BOLD}${RED}"
 cat << "EOF"
  _____ ____ ___  _   ___     _______ ____ _____ 
@@ -35,21 +27,15 @@ cat << "EOF"
 EOF
 printf "${NC}\n"
 
-# Description
 printf "${WHITE}Introducing TConvert, the world’s most private and lightning-fast local file converter. It empowers you to convert absolutely any file type in mere seconds with just 4 keystrokes—100%% free, and with no need to install complex, resource-heavy, or bloated software. By running entirely offline directly on your personal machine, TConvert guarantees maximum security and absolute privacy for your data. It’s so secure and reliable, you could comfortably process Obama and Trump's classified work files on it without batting an eye! 🛡️${NC}\n\n"
 
-# Authentic Human Credits & Links
 printf " Designed with :   ${BOLD}Mohamed Mohsen${NC} & the amazing open-source community!  ❤️\n\n"
 printf " GitHub :          ${CYAN}https://github.com/mohamedmohsenofficial/tconvert${NC}\n\n"
 printf " LinkedIn :        ${CYAN}https://linkedin.com/in/mohamedmohsenofficial${NC}\n\n"
 printf " Version :         ${YELLOW}v${VERSION}${NC}\n\n"
 sleep 0.5
 
-# ==========================================
-# 🔄 UPDATE CHECKER
-# ==========================================
 printf "${CYAN}Checking for updates... ${NC}"
-# Check remote version with a 5-second timeout. Internet is ONLY for updates.
 REMOTE_VERSION=$(curl -s --max-time 5 "$REPO_URL" | grep -m 1 '^VERSION=' | cut -d'"' -f2)
 
 if [[ -z "$REMOTE_VERSION" ]]; then
@@ -68,7 +54,7 @@ elif [[ "$REMOTE_VERSION" != "$VERSION" ]]; then
             sudo mv "$TEMP_FILE" "$0"
             printf "${GREEN}😊 Update successful! Restarting TConvert...${NC}\n\n"
             sleep 1
-            exec "$0" "$@" # Restart the script automatically
+            exec "$0" "$@"
         else
             printf "${RED}❌ Update failed. Please try again later.${NC}\n\n"
         fi
@@ -79,9 +65,6 @@ else
     printf "${GREEN}Up to date 😊${NC}\n\n"
 fi
 
-# ==========================================
-# 🔍 DEPENDENCY CHECK (System Health Check - Runs Once)
-# ==========================================
 CHECK_FILE="$HOME/.tconvert_deps_checked"
 
 if [ ! -f "$CHECK_FILE" ]; then
@@ -122,7 +105,6 @@ if [ ! -f "$CHECK_FILE" ]; then
   fi
 fi
 
-# 1. Ask for file name
 printf "${BOLD}📁 Enter file name (with extension): ${NC}"
 read FILE
 
@@ -138,37 +120,68 @@ FILENAME="${FILE%.*}"
 EXT="${FILE##*.}"
 EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
 
-# 2. Define types and suggestions
 TYPE=""
 declare -a SUGGESTIONS
 
-if [[ "mp4 mkv avi mov webm flv wmv 3gp ts m4v" =~ "$EXT" ]]; then
-  TYPE="video"
-  SUGGESTIONS=("mp4" "mkv" "avi" "webm" "mov" "mp3")
-elif [[ "mp3 wav flac m4a aac ogg wma opus" =~ "$EXT" ]]; then
-  TYPE="audio"
-  SUGGESTIONS=("m4a" "mp3" "wav" "flac" "aac" "ogg")
-elif [[ "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$EXT" ]]; then
-  TYPE="image"
-  SUGGESTIONS=("png" "jpg" "webp" "bmp" "gif" "tiff" "ico")
-elif [[ "docx doc xlsx xls pptx ppt odt ods csv" =~ "$EXT" ]]; then
-  TYPE="document"
-  SUGGESTIONS=("pdf" "docx" "odt" "csv" "html")
-elif [[ "epub mobi azw3 fb2" =~ "$EXT" ]]; then
-  TYPE="ebook"
-  SUGGESTIONS=("epub" "mobi" "azw3" "pdf" "txt")
-elif [[ "md txt rtf" =~ "$EXT" ]]; then
-  TYPE="text"
-  SUGGESTIONS=("html" "pdf" "docx" "epub")
-else
-  TYPE="unknown"
-  SUGGESTIONS=("mp4" "mp3" "jpg" "pdf" "zip")
-fi
+# Massive Transmute Database Mapping
+case "$EXT" in
+  pdf|pdf/a)
+    TYPE="document"
+    SUGGESTIONS=(avif azw3 bmp cbz dib docx epub fb2 gif html ico jp2 jpeg jxl kepub lrf md mobi pbm pcx pdb pgm png pnm ppm sgi snb tga tiff txt webp)
+    ;;
+  doc|docx)
+    TYPE="document"
+    SUGGESTIONS=(adoc epub html ipynb md muse odt opml org pdf pptx rst rtf tex textile txt)
+    ;;
+  xls|xlsx)
+    TYPE="spreadsheet"
+    SUGGESTIONS=(csv env feather html ini json jsonl ods orc parquet sqlite toml toon tsv xml yaml pdf)
+    ;;
+  csv)
+    TYPE="data"
+    SUGGESTIONS=(env feather html ini json jsonl ods orc parquet sqlite toml toon tsv xlsx xml yaml)
+    ;;
+  ppt|pptx)
+    TYPE="presentation"
+    SUGGESTIONS=(html jpeg odp pdf png ppt txt)
+    ;;
+  mp4|mkv|avi|mov|webm|flv|wmv|3gp|ts|m4v|mpeg|ogv|asf|f4v)
+    TYPE="video"
+    SUGGESTIONS=(3gp aac ac3 aiff apng asf avi f4v flac flv gif m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv)
+    ;;
+  mp3|wav|flac|m4a|aac|ogg|wma|opus|aa3|ac3|aiff|mka|mp2|oga|oma)
+    TYPE="audio"
+    SUGGESTIONS=(aac ac3 aiff flac m4a mka mp2 mp3 oga opus wav wma)
+    ;;
+  jpg|jpeg|png|webp|bmp|gif|tiff|ico|heic|svg|heif|apng|avif)
+    TYPE="image"
+    SUGGESTIONS=(apng avif blp bmp cur dcx dds dib eps flc fli gif heic heif icns ico jp2 jpeg jxl mpo msp pbm pcx pdf pfm pgm png pnm ppm psd qoi sgi svg tga tgs tiff webp xbm xpm)
+    ;;
+  epub|mobi|azw3|fb2|kepub|lrf|pdb)
+    TYPE="ebook"
+    SUGGESTIONS=(adoc azw3 docx epub fb2 html ipynb kepub lrf md mobi muse odt opml org pdb pdf pptx rst rtf snb tex textile txt)
+    ;;
+  md|txt|rtf|adoc|html|xml)
+    TYPE="text"
+    SUGGESTIONS=(adoc docx epub html ipynb md muse odt opml org pdf pptx rst rtf tex textile txt)
+    ;;
+  zip|rar|7z|tar*)
+    TYPE="archive"
+    SUGGESTIONS=(7z cbz tar tar.bz2 tar.gz tar.xz tar.zst zip)
+    ;;
+  eml|msg)
+    TYPE="email"
+    SUGGESTIONS=(docx epub html json md odt pdf rst rtf txt)
+    ;;
+  *)
+    TYPE="unknown"
+    SUGGESTIONS=(mp4 mp3 jpg pdf zip docx png mkv csv html)
+    ;;
+esac
 
 printf "${GREEN}😊 File detected as: ${TYPE} ✨${NC}\n\n"
 sleep 0.5
 
-# 3. Main Action Choice
 printf "${BOLD}${CYAN}⚙  What do you want to do?${NC}\n\n"
 printf "  1) Convert to a new format and Compression ( optional ) 🎭\n\n"
 printf "  2) Compress only ( Keep original format ) 📦\n\n"
@@ -182,15 +195,16 @@ COMP_METHOD=""
 
 if [ "$ACTION_CHOICE" == "1" ]; then
   printf "${BOLD}${WHITE}📌 Suggested formats for this file:${NC}\n\n"
+  
+  # Dynamic numbering format: 1. 2. 3.
   for i in "${!SUGGESTIONS[@]}"; do
-    printf "  %d) %s\n" $((i+1)) "${SUGGESTIONS[$i]}"
+    printf "  %d. %s\n" $((i+1)) "${SUGGESTIONS[$i]}"
   done
-  printf "  0) Type a custom format manually\n\n"
+  printf "  0. Type a custom format manually\n\n"
 
   printf "🤔 Enter the NUMBER of your choice: "
   read CHOICE
   
-  # "Thinking" Animation Effect
   printf "\n${MAGENTA}🧠 Thinking...${NC}\n\n"
   sleep 1.2
 
@@ -227,7 +241,6 @@ else
   exit 1
 fi
 
-# 4. Compression Options
 if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
   printf "${BOLD}${CYAN}⚙️  Choose compression method:${NC}\n\n"
   printf "  1) By Percentage (%%) 📉\n\n"
@@ -272,7 +285,6 @@ if [[ "mp3 wav flac m4a aac ogg wma opus" =~ "$TARGET_EXT" ]]; then
   IS_TARGET_AUDIO=true
 fi
 
-# Progress Variables
 TOTAL_SEC=0
 USE_REAL_PROGRESS=false
 FFMPEG_LOG="/tmp/ffmpeg_progress.log"
@@ -281,9 +293,11 @@ rm -f "$FFMPEG_LOG"
 printf "${MAGENTA}⚙️  Preparing engines...${NC}\n\n"
 sleep 1
 
-# 5. Engine Logic & Math
-if [[ "mp4 mkv avi mov webm flv wmv 3gp ts m4v mp3 wav flac m4a aac ogg wma opus" =~ "$EXT" || "mp4 mkv avi mov webm flv wmv 3gp ts m4v mp3 wav flac m4a aac ogg wma opus" =~ "$TARGET_EXT" ]]; then
-  
+# ==========================================
+# SMART ENGINE ROUTING (Target-Based)
+# ==========================================
+if [[ " 3gp aac ac3 aiff apng asf avi f4v flac flv m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv " =~ " $TARGET_EXT " ]]; then
+  # FFMPEG ENGINE
   if [ "$IS_TARGET_AUDIO" = true ] && [ "$EXT" != "$TARGET_EXT" ]; then
     ARGS="-vn "
   fi
@@ -326,7 +340,8 @@ if [[ "mp4 mkv avi mov webm flv wmv 3gp ts m4v mp3 wav flac m4a aac ogg wma opus
     CMD="ffmpeg -i \"$FILE\" $ARGS \"$OUTPUT_FILE\" -y"
   fi
 
-elif [[ "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$EXT" || "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$TARGET_EXT" ]]; then
+elif [[ " apng avif blp bmp cur dcx dds dib eps flc fli gif heic heif icns ico jp2 jpeg jxl mpo msp pbm pcx pfm pgm png pnm ppm psd qoi sgi svg tga tgs tiff webp xbm xpm " =~ " $TARGET_EXT " ]]; then
+  # MAGICK ENGINE
   if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
     if [ "$COMP_METHOD" == "1" ] && [ -n "$COMP_PERCENT" ]; then
       QUAL=$(( 100 - COMP_PERCENT ))
@@ -338,24 +353,25 @@ elif [[ "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$EXT" || "jpg jpeg png
   fi
   CMD="magick \"$FILE\" $ARGS \"$OUTPUT_FILE\""
 
-elif [[ "docx doc xlsx xls pptx ppt odt ods csv" =~ "$EXT" || "docx doc xlsx xls pptx ppt odt ods csv" =~ "$TARGET_EXT" ]]; then
-  printf "${MAGENTA} Converting document...${NC}\n"
-  # إضافة --outdir عشان نضمن الملف يخرج في نفس المكان
+elif [[ " docx doc odt xlsx xls ods csv pptx ppt odp pdf " =~ " $TARGET_EXT " ]]; then
+  # LIBREOFFICE ENGINE
+  printf "${MAGENTA}🔄 Converting document...${NC}\n"
   CMD="libreoffice --headless --convert-to $TARGET_EXT --outdir . \"$FILE\""
   OUTPUT_FILE="${FILENAME}.${TARGET_EXT}"
 
-elif [[ "epub mobi azw3 fb2" =~ "$EXT" || "epub mobi azw3 fb2" =~ "$TARGET_EXT" ]]; then
+elif [[ " epub mobi azw3 fb2 kepub lrf pdb snb " =~ " $TARGET_EXT " ]]; then
+  # CALIBRE ENGINE
   CMD="ebook-convert \"$FILE\" \"$OUTPUT_FILE\""
 
-elif [[ "md txt rtf" =~ "$EXT" ]]; then
+elif [[ " md txt rtf html adoc ipynb muse opml org tex textile xml " =~ " $TARGET_EXT " ]]; then
+  # PANDOC ENGINE
   CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
 
 else
-  printf "${RED}❌ Error: File format not supported by existing engines.${NC}\n"
+  printf "${RED}❌ Error: Format engine routing failed. Try a standard format.${NC}\n"
   exit 1
 fi
 
-# 6. Execution & Animation Arrays
 ERROR_LOG="/tmp/tconvert_error.log"
 eval $CMD > "$ERROR_LOG" 2>&1 &
 PID=$!
@@ -364,7 +380,6 @@ bar_width=30
 frames=("⏳" "⌛")
 
 if [ "$USE_REAL_PROGRESS" = true ]; then
-  # REAL PERCENTAGE PROGRESS BAR
   f_idx=0
   while kill -0 $PID 2>/dev/null; do
     if [ -f "$FFMPEG_LOG" ]; then
@@ -402,7 +417,6 @@ if [ "$USE_REAL_PROGRESS" = true ]; then
     sleep 0.5
   done
 else
-  # INDETERMINATE PROGRESS BAR 
   h_idx=0
   while kill -0 $PID 2>/dev/null; do
     anim=${frames[$((h_idx % ${#frames[@]}))]}
