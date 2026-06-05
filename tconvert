@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --- VERSION CONTROL ---
-VERSION="1.0.3"
+VERSION="1.0.6"
 REPO_URL="https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert"
 
 BOLD='\033[1m'
@@ -116,38 +116,50 @@ if [ ! -f "$FILE" ]; then
   exit 1
 fi
 
-FILENAME="${FILE%.*}"
-EXT="${FILE##*.}"
+# SAFE EXTENSION EXTRACTION (Supports tar.gz, tar.xz)
+LOWER_FILE=$(echo "$FILE" | tr '[:upper:]' '[:lower:]')
+if [[ "$LOWER_FILE" == *.tar.gz ]]; then
+  EXT="tar.gz"
+  FILENAME="${FILE%.*}"
+  FILENAME="${FILENAME%.*}"
+elif [[ "$LOWER_FILE" == *.tar.bz2 ]]; then
+  EXT="tar.bz2"
+  FILENAME="${FILE%.*}"
+  FILENAME="${FILENAME%.*}"
+elif [[ "$LOWER_FILE" == *.tar.xz ]]; then
+  EXT="tar.xz"
+  FILENAME="${FILE%.*}"
+  FILENAME="${FILENAME%.*}"
+else
+  EXT="${FILE##*.}"
+  FILENAME="${FILE%.*}"
+fi
 EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
 
 TYPE=""
 declare -a SUGGESTIONS
 
-# Massive Transmute Database Mapping
+# Bulletproof Engine Mapping (Strictly what we can convert NOW)
 case "$EXT" in
   pdf|pdf/a)
     TYPE="document"
-    SUGGESTIONS=(avif azw3 bmp cbz dib docx epub fb2 gif html ico jp2 jpeg jxl kepub lrf md mobi pbm pcx pdb pgm png pnm ppm sgi snb tga tiff txt webp)
+    SUGGESTIONS=(jpg png bmp tiff webp) # Magick extracts PDF pages to images
     ;;
-  doc|docx)
+  doc|docx|odt)
     TYPE="document"
-    SUGGESTIONS=(adoc epub html ipynb md muse odt opml org pdf pptx rst rtf tex textile txt)
+    SUGGESTIONS=(pdf odt html txt epub rtf)
     ;;
-  xls|xlsx)
+  xls|xlsx|ods|csv|tsv)
     TYPE="spreadsheet"
-    SUGGESTIONS=(csv env feather html ini json jsonl ods orc parquet sqlite toml toon tsv xml yaml pdf)
+    SUGGESTIONS=(pdf xlsx ods csv html txt)
     ;;
-  csv)
-    TYPE="data"
-    SUGGESTIONS=(env feather html ini json jsonl ods orc parquet sqlite toml toon tsv xlsx xml yaml)
-    ;;
-  ppt|pptx)
+  ppt|pptx|odp)
     TYPE="presentation"
-    SUGGESTIONS=(html jpeg odp pdf png ppt txt)
+    SUGGESTIONS=(pdf odp html txt)
     ;;
   mp4|mkv|avi|mov|webm|flv|wmv|3gp|ts|m4v|mpeg|ogv|asf|f4v)
     TYPE="video"
-    SUGGESTIONS=(3gp aac ac3 aiff apng asf avi f4v flac flv gif m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv)
+    SUGGESTIONS=(3gp aac ac3 aiff asf avi flac flv gif m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv)
     ;;
   mp3|wav|flac|m4a|aac|ogg|wma|opus|aa3|ac3|aiff|mka|mp2|oga|oma)
     TYPE="audio"
@@ -155,23 +167,19 @@ case "$EXT" in
     ;;
   jpg|jpeg|png|webp|bmp|gif|tiff|ico|heic|svg|heif|apng|avif)
     TYPE="image"
-    SUGGESTIONS=(apng avif blp bmp cur dcx dds dib eps flc fli gif heic heif icns ico jp2 jpeg jxl mpo msp pbm pcx pdf pfm pgm png pnm ppm psd qoi sgi svg tga tgs tiff webp xbm xpm)
+    SUGGESTIONS=(apng bmp dds dib eps gif heic heif icns ico jp2 jpeg jxl pbm pcx pfm pgm png pnm ppm psd sgi svg tga tiff webp xbm xpm pdf)
     ;;
-  epub|mobi|azw3|fb2|kepub|lrf|pdb)
+  epub|mobi|azw3|fb2|kepub|lrf|pdb|snb)
     TYPE="ebook"
-    SUGGESTIONS=(adoc azw3 docx epub fb2 html ipynb kepub lrf md mobi muse odt opml org pdb pdf pptx rst rtf snb tex textile txt)
+    SUGGESTIONS=(azw3 docx epub fb2 html lrf mobi odt pdb pdf rtf snb txt)
     ;;
-  md|txt|rtf|adoc|html|xml)
+  md|txt|rtf|adoc|xml|tex)
     TYPE="text"
-    SUGGESTIONS=(adoc docx epub html ipynb md muse odt opml org pdf pptx rst rtf tex textile txt)
+    SUGGESTIONS=(adoc docx epub html md odt pdf rtf tex txt)
     ;;
   zip|cbz|tar|tar.gz|tar.bz2|tar.xz|tgz)
     TYPE="archive"
     SUGGESTIONS=(zip cbz tar tar.gz tar.bz2 tar.xz)
-    ;;
-  eml|msg)
-    TYPE="email"
-    SUGGESTIONS=(docx epub html json md odt pdf rst rtf txt)
     ;;
   *)
     TYPE="unknown"
@@ -293,10 +301,11 @@ printf "${MAGENTA}⚙️  Preparing engines...${NC}\n\n"
 sleep 1
 
 # ==========================================
-# SMART ENGINE ROUTING (Target-Based)
+# BULLETPROOF ENGINE ROUTING (Strict matching)
 # ==========================================
-if [[ " 3gp aac ac3 aiff apng asf avi f4v flac flv m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv " =~ " $TARGET_EXT " ]]; then
-  # FFMPEG ENGINE
+
+# 1. FFmpeg (Video/Audio)
+if [[ " 3gp aac ac3 aiff apng asf avi f4v flac flv m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "video" || "$TYPE" == "audio" ]]; then
   if [ "$IS_TARGET_AUDIO" = true ] && [ "$EXT" != "$TARGET_EXT" ]; then
     ARGS="-vn "
   fi
@@ -339,8 +348,8 @@ if [[ " 3gp aac ac3 aiff apng asf avi f4v flac flv m4a m4v mka mkv mov mp2 mp3 m
     CMD="ffmpeg -i \"$FILE\" $ARGS \"$OUTPUT_FILE\" -y"
   fi
 
-elif [[ " apng avif blp bmp cur dcx dds dib eps flc fli gif heic heif icns ico jp2 jpeg jxl mpo msp pbm pcx pfm pgm png pnm ppm psd qoi sgi svg tga tgs tiff webp xbm xpm " =~ " $TARGET_EXT " ]]; then
-  # MAGICK ENGINE
+# 2. ImageMagick (Images)
+elif [[ " apng bmp dds dib eps gif heic heif icns ico jp2 jpeg jxl pbm pcx pfm pgm png pnm ppm psd sgi svg tga tiff webp xbm xpm pdf " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "image" || "$EXT" == "pdf" ]]; then
   if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
     if [ "$COMP_METHOD" == "1" ] && [ -n "$COMP_PERCENT" ]; then
       QUAL=$(( 100 - COMP_PERCENT ))
@@ -350,30 +359,15 @@ elif [[ " apng avif blp bmp cur dcx dds dib eps flc fli gif heic heif icns ico j
       ARGS="-define jpeg:extent=${TARGET_MB}MB -define webp:extent=${TARGET_MB}MB"
     fi
   fi
-  CMD="magick \"$FILE\" $ARGS \"$OUTPUT_FILE\""
+  CMD="magick -density 300 \"$FILE\" $ARGS \"$OUTPUT_FILE\""
 
-elif [[ " docx doc odt xlsx xls ods csv pptx ppt odp pdf " =~ " $TARGET_EXT " ]]; then
-  # LIBREOFFICE ENGINE
-  printf "${MAGENTA}🔄 Converting document...${NC}\n"
-  CMD="libreoffice --headless --convert-to $TARGET_EXT --outdir . \"$FILE\""
-  OUTPUT_FILE="${FILENAME}.${TARGET_EXT}"
-
-elif [[ " epub mobi azw3 fb2 kepub lrf pdb snb " =~ " $TARGET_EXT " ]]; then
-  # CALIBRE ENGINE
-  CMD="ebook-convert \"$FILE\" \"$OUTPUT_FILE\""
-
-elif [[ " md txt rtf html adoc ipynb muse opml org tex textile xml " =~ " $TARGET_EXT " ]]; then
-  # PANDOC ENGINE
-  CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
-
+# 3. Native Linux Archive (Zip/Tar)
 elif [[ " zip cbz tar tar.gz tar.bz2 tar.xz tgz " =~ " $TARGET_EXT " ]]; then
-  # NATIVE LINUX ARCHIVE ENGINE (zip, unzip, tar)
-  ABS_FILE="$PWD/$FILE"
-  ABS_OUTPUT="$PWD/$OUTPUT_FILE"
+  if [[ "$FILE" = /* ]]; then ABS_FILE="$FILE"; else ABS_FILE="$PWD/$FILE"; fi
+  if [[ "$OUTPUT_FILE" = /* ]]; then ABS_OUTPUT="$OUTPUT_FILE"; else ABS_OUTPUT="$PWD/$OUTPUT_FILE"; fi
   
   CMD="TEMP_DIR=\$(mktemp -d) && "
   
-  # Step 1: Extract based on input format
   if [[ "$EXT" == "zip" || "$EXT" == "cbz" ]]; then
     CMD+="unzip -q \"\$ABS_FILE\" -d \"\$TEMP_DIR\" && "
   elif [[ "$EXT" == "tar" ]]; then
@@ -386,7 +380,6 @@ elif [[ " zip cbz tar tar.gz tar.bz2 tar.xz tgz " =~ " $TARGET_EXT " ]]; then
     CMD+="tar -xJf \"\$ABS_FILE\" -C \"\$TEMP_DIR\" && "
   fi
 
-  # Step 2: Compress based on Target format
   CMD+="(cd \"\$TEMP_DIR\" && "
   if [[ "$TARGET_EXT" == "zip" || "$TARGET_EXT" == "cbz" ]]; then
     CMD+="zip -rq \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
@@ -400,8 +393,22 @@ elif [[ " zip cbz tar tar.gz tar.bz2 tar.xz tgz " =~ " $TARGET_EXT " ]]; then
     CMD+="tar -cJf \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
   fi
 
+# 4. Calibre (E-books)
+elif [[ " epub mobi azw3 fb2 kepub lrf pdb snb " =~ " $TARGET_EXT " ]] || [[ "$TYPE" == "ebook" && " epub mobi azw3 fb2 kepub lrf pdb snb docx rtf txt pdf " =~ " $TARGET_EXT " ]]; then
+  CMD="ebook-convert \"$FILE\" \"$OUTPUT_FILE\""
+
+# 5. Pandoc & LibreOffice (Documents, Spreadsheets, Text)
+elif [[ " docx odt xlsx ods csv tsv pptx odp pdf html xml rtf txt md tex " =~ " $TARGET_EXT " ]]; then
+  if [[ "$TYPE" == "text" ]]; then
+    CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
+  else
+    printf "${MAGENTA}🔄 Converting document/spreadsheet...${NC}\n"
+    CMD="libreoffice --headless --convert-to $TARGET_EXT --outdir . \"$FILE\""
+    OUTPUT_FILE="${FILENAME}.${TARGET_EXT}"
+  fi
+
 else
-  printf "${RED}❌ Error: Format engine routing failed. Try a standard format.${NC}\n"
+  printf "${RED}❌ Error: Format engine routing failed. Target format not currently supported.${NC}\n"
   exit 1
 fi
 
