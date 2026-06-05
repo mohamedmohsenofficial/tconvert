@@ -142,13 +142,18 @@ tconvert
 
 ## 💖 Support
 
-If you enjoy this tool and it saves you time, consider supporting the development! Every contribution keeps the project alive and helps 🌍✨
+If you find this project useful, consider supporting its development. Every contribution helps improve features, maintain the project, and keep it accessible for everyone. 🌍✨
 
-<a href="https://www.buymeacoffee.com/mohsenofficial" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
-</a>
+<p align="left">
+  <a href="https://www.buymeacoffee.com/mohsenofficial" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" width="200">
+  </a>
+</p>
 
-<div align="lift">
-  <b>Created by Mohamed Mohsen</b>
-  Love you guys 🤟🏼😘
-</div>
+---
+
+Created by [Mohamed Mohsen](https://www.linkedin.com/in/mohsenofficial)) 💙
+
+Built with passion, curiosity, countless hours of learning, and a deep love for open-source software.
+
+Thank you for using this project and being part of its journey. 🤟🏼😘
