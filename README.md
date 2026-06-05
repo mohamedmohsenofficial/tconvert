@@ -1,4 +1,8 @@
+<div align="center">
+  <img src="🎭 Pic.png" alt="TConvert Logo" width="250">
+
 # 🎭 TConvert - Universal File Converter
+</div>
 
 ![Version](https://img.shields.io/badge/Version-1.0.0-orange?style=for-the-badge)
 ![Bash](https://img.shields.io/badge/Language-Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
