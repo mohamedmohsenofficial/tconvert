@@ -140,8 +140,7 @@ If you enjoy this tool and it saves you time, consider supporting the developmen
 
 <br><br>
 
-<div align="center">
-  <b>Created with 💙 by Mohsen</b><br>
-  Transforming your terminal, one file at a time.<br>
+<div align="lift">
+  <b>Created by Mohamed Mohsen</b>
   Love you guys 🤟🏼😘
 </div>
