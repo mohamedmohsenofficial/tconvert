@@ -1,0 +1,427 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Script Name: TConvert (Universal File Converter)
+# Purpose:     Crafted to save time, cure "Terminal Phobia", and make the CLI
+#              your best friend. Open for everyone to learn, review & improve!
+# ==============================================================================
+
+# --- VERSION CONTROL ---
+VERSION="1.0.0"
+REPO_URL="https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert"
+
+# Terminal colors and styles
+BOLD='\033[1m'
+RED='\033[1;31m'
+WHITE='\033[1;37m'
+GRAY='\033[1;30m'
+YELLOW='\033[1;33m'
+GREEN='\033[1;32m'
+BLUE='\033[1;34m'
+CYAN='\033[1;36m'
+MAGENTA='\033[1;35m'
+NC='\033[0m' # No Color
+
+# Clear screen for a fresh look
+clear
+
+# Giant ASCII Art Title
+printf "${BOLD}${RED}"
+cat << "EOF"
+ _____ ____ ___  _   ___     _______ ____ _____ 
+|_   _/ ___/ _ \| \ | \ \   / / ____|  _ \_   _|
+  | || |  | | | |  \| |\ \ / /|  _| | |_) || |  
+  | || |__| |_| | |\  | \ V / | |___|  _ < | |  
+  |_| \____\___/|_| \_|  \_/  |_____|_| \_\|_|  
+EOF
+printf "${NC}\n"
+
+# Description
+printf "${WHITE}Introducing TConvert, the world’s most private and lightning-fast local file converter. It empowers you to convert absolutely any file type in mere seconds with just 4 keystrokes—100%% free, and with no need to install complex, resource-heavy, or bloated software. By running entirely offline directly on your personal machine, TConvert guarantees maximum security and absolute privacy for your data. It’s so secure and reliable, you could comfortably process Obama and Trump's classified work files on it without batting an eye! 🛡️${NC}\n\n"
+
+# Authentic Human Credits & Links
+printf " Designed with :   ${BOLD}Mohamed Mohsen${NC} & the amazing open-source community!  ❤️\n\n"
+printf " GitHub :          ${CYAN}https://github.com/mohamedmohsenofficial/tconvert${NC}\n\n"
+printf " LinkedIn :        ${CYAN}https://linkedin.com/in/mohamedmohsenofficial${NC}\n\n"
+printf " Version :         ${YELLOW}v${VERSION}${NC}\n\n"
+sleep 0.5
+
+# ==========================================
+# 🔄 UPDATE CHECKER
+# ==========================================
+printf "${CYAN}Checking for updates... ${NC}"
+# Check remote version with a 5-second timeout. Internet is ONLY for updates.
+REMOTE_VERSION=$(curl -s --max-time 5 "$REPO_URL" | grep -m 1 '^VERSION=' | cut -d'"' -f2)
+
+if [[ -z "$REMOTE_VERSION" ]]; then
+    printf "${YELLOW}Could not connect. Working offline.${NC}\n\n"
+    printf "${GRAY}( Internet is only for updates, conversion is 100%% offline! )${NC}\n\n"
+elif [[ "$REMOTE_VERSION" != "$VERSION" ]]; then
+    printf "\n${YELLOW}🚀 New version available: v${REMOTE_VERSION} (Current: v${VERSION})${NC}\n\n"
+    printf "🤔 Do you want to install the update now? (y/n): "
+    read UPDATE_CHOICE
+    if [[ "$UPDATE_CHOICE" =~ ^[Yy]$ ]]; then
+        printf "\n${MAGENTA}📥 Downloading update...${NC}\n"
+        TEMP_FILE="/tmp/tconvert_update"
+        if curl -s -o "$TEMP_FILE" "$REPO_URL"; then
+            chmod +x "$TEMP_FILE"
+            printf "${YELLOW}🔑 Admin privileges might be required to apply the update.${NC}\n"
+            sudo mv "$TEMP_FILE" "$0"
+            printf "${GREEN}😊 Update successful! Restarting TConvert...${NC}\n\n"
+            sleep 1
+            exec "$0" "$@" # Restart the script automatically
+        else
+            printf "${RED}❌ Update failed. Please try again later.${NC}\n\n"
+        fi
+    else
+        printf "\n${GREEN}😊 Continuing with current version...${NC}\n\n"
+    fi
+else
+    printf "${GREEN}Up to date 😊${NC}\n\n"
+fi
+
+# ==========================================
+# 🔍 DEPENDENCY CHECK (System Health Check - Runs Once)
+# ==========================================
+CHECK_FILE="$HOME/.tconvert_deps_checked"
+
+if [ ! -f "$CHECK_FILE" ]; then
+  printf "${CYAN}🔍 Running System Health Check...${NC} "
+  sleep 1
+
+  MISSING_DEPS=()
+  if ! command -v ffmpeg &> /dev/null; then MISSING_DEPS+=("ffmpeg (For Video & Audio)"); fi
+  if ! command -v magick &> /dev/null; then MISSING_DEPS+=("imagemagick (For Images)"); fi
+  if ! command -v libreoffice &> /dev/null; then MISSING_DEPS+=("libreoffice (For Documents)"); fi
+  if ! command -v ebook-convert &> /dev/null; then MISSING_DEPS+=("calibre (For E-books)"); fi
+  if ! command -v pandoc &> /dev/null; then MISSING_DEPS+=("pandoc (For Text/Markdown)"); fi
+
+  if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
+    printf "\n\n${YELLOW}⚠️ NOTICE: SOME ENGINES ARE MISSING${NC}\n"
+    printf "${WHITE}TConvert acts as a central commander. You can still proceed and use the tool for the engines you already have, but the following are missing:${NC}\n\n"
+    
+    for dep in "${MISSING_DEPS[@]}"; do
+      printf " ❌ ${RED}%s${NC}\n" "$dep"
+    done
+    
+    printf "\n🤔 Do you want to continue with the installed engines only? (y/n): "
+    read CONTINUE_CHOICE
+    
+    if [[ "$CONTINUE_CHOICE" =~ ^[Yy]$ ]]; then
+      printf "\n${GREEN}😊 OK! We will skip this check in the future.${NC}\n\n"
+      touch "$CHECK_FILE"
+      sleep 0.5
+    else
+      printf "\n${WHITE}Please head back to the GitHub page for installation instructions:${NC}\n"
+      printf "${BLUE}https://github.com/mohamedmohsenofficial/tconvert#%EF%B8%8F-critical-notice-dependencies-required-first${NC}\n\n"
+      exit 1
+    fi
+  else
+    printf "${GREEN}😊 All engines are locked and loaded! 🚀${NC}\n\n"
+    touch "$CHECK_FILE"
+    sleep 0.5
+  fi
+fi
+
+# 1. Ask for file name
+printf "${BOLD}📁 Enter file name (with extension): ${NC}"
+read FILE
+
+printf "\n${MAGENTA}🔍 Analyzing file...${NC}\n\n"
+sleep 0.8
+
+if [ ! -f "$FILE" ]; then
+  printf "${RED}❌ Error: File '%s' not found! Are you sure the name is correct?${NC}\n" "$FILE"
+  exit 1
+fi
+
+FILENAME="${FILE%.*}"
+EXT="${FILE##*.}"
+EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
+
+# 2. Define types and suggestions
+TYPE=""
+declare -a SUGGESTIONS
+
+if [[ "mp4 mkv avi mov webm flv wmv 3gp ts m4v" =~ "$EXT" ]]; then
+  TYPE="video"
+  SUGGESTIONS=("mp4" "mkv" "avi" "webm" "mov" "mp3")
+elif [[ "mp3 wav flac m4a aac ogg wma opus" =~ "$EXT" ]]; then
+  TYPE="audio"
+  SUGGESTIONS=("m4a" "mp3" "wav" "flac" "aac" "ogg")
+elif [[ "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$EXT" ]]; then
+  TYPE="image"
+  SUGGESTIONS=("png" "jpg" "webp" "bmp" "gif" "tiff" "ico")
+elif [[ "docx doc xlsx xls pptx ppt odt ods csv" =~ "$EXT" ]]; then
+  TYPE="document"
+  SUGGESTIONS=("pdf" "docx" "odt" "csv" "html")
+elif [[ "epub mobi azw3 fb2" =~ "$EXT" ]]; then
+  TYPE="ebook"
+  SUGGESTIONS=("epub" "mobi" "azw3" "pdf" "txt")
+elif [[ "md txt rtf" =~ "$EXT" ]]; then
+  TYPE="text"
+  SUGGESTIONS=("html" "pdf" "docx" "epub")
+else
+  TYPE="unknown"
+  SUGGESTIONS=("mp4" "mp3" "jpg" "pdf" "zip")
+fi
+
+printf "${GREEN}😊 File detected as: ${TYPE} ✨${NC}\n\n"
+sleep 0.5
+
+# 3. Main Action Choice
+printf "${BOLD}${CYAN}⚙  What do you want to do?${NC}\n\n"
+printf "  1) Convert to a new format and Compression ( optional ) 🎭\n\n"
+printf "  2) Compress only ( Keep original format ) 📦\n\n"
+printf "🤔 Enter choice (1 or 2): "
+read ACTION_CHOICE
+printf "\n${GREEN}😊 Got it!${NC}\n\n"
+sleep 0.5
+
+DO_COMPRESS="n"
+COMP_METHOD=""
+
+if [ "$ACTION_CHOICE" == "1" ]; then
+  printf "${BOLD}${WHITE}📌 Suggested formats for this file:${NC}\n\n"
+  for i in "${!SUGGESTIONS[@]}"; do
+    printf "  %d) %s\n" $((i+1)) "${SUGGESTIONS[$i]}"
+  done
+  printf "  0) Type a custom format manually\n\n"
+
+  printf "🤔 Enter the NUMBER of your choice: "
+  read CHOICE
+  
+  # "Thinking" Animation Effect
+  printf "\n${MAGENTA}🧠 Thinking...${NC}\n\n"
+  sleep 1.2
+
+  if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [ "$CHOICE" -gt 0 ] && [ "$CHOICE" -le "${#SUGGESTIONS[@]}" ]; then
+    TARGET_EXT="${SUGGESTIONS[$((CHOICE-1))]}"
+  elif [ "$CHOICE" == "0" ]; then
+    printf "🎯 Type the format manually (e.g. mp4): "
+    read TARGET_EXT
+  else
+    TARGET_EXT="$CHOICE"
+  fi
+  
+  TARGET_EXT=${TARGET_EXT#.}
+  TARGET_EXT=$(echo "$TARGET_EXT" | tr '[:upper:]' '[:lower:]')
+  printf "\n${GREEN}😊 Excellent choice!${NC}\n\n"
+  sleep 0.5
+
+  if [[ "$TYPE" == "video" || "$TYPE" == "audio" || "$TYPE" == "image" ]]; then
+    printf "📦 Do you want to compress the file? (y/n): "
+    read DO_COMPRESS
+    printf "\n${GREEN}😊 OK${NC}\n\n"
+  fi
+
+elif [ "$ACTION_CHOICE" == "2" ]; then
+  TARGET_EXT="$EXT"
+  if [[ "$TYPE" == "video" || "$TYPE" == "audio" || "$TYPE" == "image" ]]; then
+    DO_COMPRESS="y"
+  else
+    printf "${YELLOW}⚠️ Compression is not supported for %s files. Just duplicating.${NC}\n\n" "$TYPE"
+    DO_COMPRESS="n"
+  fi
+else
+  printf "${RED}❌ Invalid choice!${NC}\n"
+  exit 1
+fi
+
+# 4. Compression Options
+if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
+  printf "${BOLD}${CYAN}⚙️  Choose compression method:${NC}\n\n"
+  printf "  1) By Percentage (%%) 📉\n\n"
+  printf "  2) By Target Size (MB) 💾\n\n"
+  printf "🤔 Enter choice (1 or 2): "
+  read COMP_METHOD
+  printf "\n${GREEN}😊 OK${NC}\n\n"
+  sleep 0.5
+
+  if [ "$COMP_METHOD" == "1" ]; then
+    printf "${BOLD}${CYAN}⚙️  Choose compression level:${NC}\n\n"
+    printf "  1) High Quality (Light compression ~ 20%%) 🟢\n\n"
+    printf "  2) Medium Quality (Balanced ~ 50%%) 🟡\n\n"
+    printf "  3) Low Quality (Heavy compression ~ 80%%) 🔴\n\n"
+    printf "  0) Custom Percentage ✍️\n\n"
+    printf "🤔 Enter choice (0-3): "
+    read COMP_CHOICE
+    printf "\n${GREEN}😊 OK${NC}\n\n"
+
+    case "$COMP_CHOICE" in
+      1) COMP_PERCENT=20 ;;
+      2) COMP_PERCENT=50 ;;
+      3) COMP_PERCENT=80 ;;
+      0) printf "📉 Enter custom compression percentage (1-100): "; read COMP_PERCENT; printf "\n${GREEN}😊 OK${NC}\n\n" ;;
+      *) printf "⚠️ Invalid. Defaulting to 50%%.\n\n"; COMP_PERCENT=50 ;;
+    esac
+  elif [ "$COMP_METHOD" == "2" ]; then
+    printf "💾 Enter target size in Megabytes (MB): "
+    read TARGET_MB
+    printf "\n${GREEN}😊 OK${NC}\n\n"
+  else
+    printf "${YELLOW}⚠️ Invalid choice. Skipping compression.${NC}\n\n"
+  fi
+fi
+
+OUTPUT_FILE="${FILENAME}_tconvert.${TARGET_EXT}"
+CMD=""
+ARGS=""
+
+IS_TARGET_AUDIO=false
+if [[ "mp3 wav flac m4a aac ogg wma opus" =~ "$TARGET_EXT" ]]; then
+  IS_TARGET_AUDIO=true
+fi
+
+# Progress Variables
+TOTAL_SEC=0
+USE_REAL_PROGRESS=false
+FFMPEG_LOG="/tmp/ffmpeg_progress.log"
+rm -f "$FFMPEG_LOG"
+
+printf "${MAGENTA}⚙️  Preparing engines...${NC}\n\n"
+sleep 1
+
+# 5. Engine Logic & Math
+if [[ "mp4 mkv avi mov webm flv wmv 3gp ts m4v mp3 wav flac m4a aac ogg wma opus" =~ "$EXT" || "mp4 mkv avi mov webm flv wmv 3gp ts m4v mp3 wav flac m4a aac ogg wma opus" =~ "$TARGET_EXT" ]]; then
+  
+  if [ "$IS_TARGET_AUDIO" = true ] && [ "$EXT" != "$TARGET_EXT" ]; then
+    ARGS="-vn "
+  fi
+
+  if command -v ffprobe &> /dev/null; then
+    TOTAL_SEC=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | awk '{print int($1)}')
+    if [[ -n "$TOTAL_SEC" && "$TOTAL_SEC" -gt 0 ]]; then
+      USE_REAL_PROGRESS=true
+    fi
+  fi
+
+  if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
+    if [ "$COMP_METHOD" == "1" ] && [ -n "$COMP_PERCENT" ]; then
+      if [ "$IS_TARGET_AUDIO" = false ]; then
+        CRF=$(( 18 + (COMP_PERCENT * 33 / 100) ))
+        ARGS+="-c:v libx264 -crf $CRF -preset fast"
+      else
+        BR=$(( 64 + ((100 - COMP_PERCENT) * 256 / 100) ))
+        ARGS+="-b:a ${BR}k"
+      fi
+    elif [ "$COMP_METHOD" == "2" ] && [ -n "$TARGET_MB" ]; then
+      if [ "$USE_REAL_PROGRESS" = true ]; then
+        TOTAL_BITRATE=$(( (TARGET_MB * 8192) / TOTAL_SEC ))
+        if [ "$IS_TARGET_AUDIO" = false ]; then
+          V_BITRATE=$(( TOTAL_BITRATE - 128 ))
+          if [ $V_BITRATE -lt 50 ]; then V_BITRATE=50; fi
+          ARGS+="-b:v ${V_BITRATE}k -maxrate ${V_BITRATE}k -bufsize $((V_BITRATE*2))k -b:a 128k"
+        else
+          ARGS+="-b:a ${TOTAL_BITRATE}k"
+        fi
+      else
+        ARGS+="-c:v libx264 -crf 30 -preset fast"
+      fi
+    fi
+  fi
+  
+  if [ "$USE_REAL_PROGRESS" = true ]; then
+    CMD="ffmpeg -i \"$FILE\" $ARGS -progress \"$FFMPEG_LOG\" -nostats \"$OUTPUT_FILE\" -y"
+  else
+    CMD="ffmpeg -i \"$FILE\" $ARGS \"$OUTPUT_FILE\" -y"
+  fi
+
+elif [[ "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$EXT" || "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$TARGET_EXT" ]]; then
+  if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
+    if [ "$COMP_METHOD" == "1" ] && [ -n "$COMP_PERCENT" ]; then
+      QUAL=$(( 100 - COMP_PERCENT ))
+      if [ "$QUAL" -lt 1 ]; then QUAL=1; fi
+      ARGS="-quality $QUAL"
+    elif [ "$COMP_METHOD" == "2" ] && [ -n "$TARGET_MB" ]; then
+      ARGS="-define jpeg:extent=${TARGET_MB}MB -define webp:extent=${TARGET_MB}MB"
+    fi
+  fi
+  CMD="magick \"$FILE\" $ARGS \"$OUTPUT_FILE\""
+
+elif [[ "docx doc xlsx xls pptx ppt odt ods csv" =~ "$EXT" || "docx doc xlsx xls pptx ppt odt ods csv" =~ "$TARGET_EXT" ]]; then
+  TEMP_OUT="${FILENAME}.${TARGET_EXT}"
+  CMD="libreoffice --headless --convert-to $TARGET_EXT \"$FILE\" && mv \"$TEMP_OUT\" \"$OUTPUT_FILE\" 2>/dev/null"
+
+elif [[ "epub mobi azw3 fb2" =~ "$EXT" || "epub mobi azw3 fb2" =~ "$TARGET_EXT" ]]; then
+  CMD="ebook-convert \"$FILE\" \"$OUTPUT_FILE\""
+
+elif [[ "md txt rtf" =~ "$EXT" ]]; then
+  CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
+
+else
+  printf "${RED}❌ Error: File format not supported by existing engines.${NC}\n"
+  exit 1
+fi
+
+# 6. Execution & Animation Arrays
+ERROR_LOG="/tmp/tconvert_error.log"
+eval $CMD > "$ERROR_LOG" 2>&1 &
+PID=$!
+
+bar_width=30
+frames=("⏳" "⌛")
+
+if [ "$USE_REAL_PROGRESS" = true ]; then
+  # REAL PERCENTAGE PROGRESS BAR
+  f_idx=0
+  while kill -0 $PID 2>/dev/null; do
+    if [ -f "$FFMPEG_LOG" ]; then
+      CURRENT_US=$(grep "out_time_us=" "$FFMPEG_LOG" | tail -n 1 | cut -d '=' -f 2)
+      if [[ -n "$CURRENT_US" && "$CURRENT_US" =~ ^[0-9]+$ ]]; then
+        CURRENT_SEC=$(( CURRENT_US / 1000000 ))
+        PCT=$(( (CURRENT_SEC * 100) / TOTAL_SEC ))
+        if [ "$PCT" -gt 100 ]; then PCT=100; fi
+        if [ "$PCT" -lt 0 ]; then PCT=0; fi
+        
+        filled_len=$(( PCT * bar_width / 100 ))
+        empty_len=$(( bar_width - filled_len ))
+        
+        filled=""
+        [ $filled_len -gt 0 ] && filled=$(printf "%${filled_len}s" | tr ' ' '#')
+        empty=""
+        [ $empty_len -gt 0 ] && empty=$(printf "%${empty_len}s" | tr ' ' '-')
+        
+        if [ "$PCT" -le 25 ]; then
+            P_COLOR=$RED; P_ICON="🔴"
+        elif [ "$PCT" -le 50 ]; then
+            P_COLOR=$YELLOW; P_ICON="🟡"
+        elif [ "$PCT" -le 75 ]; then
+            P_COLOR=$BLUE; P_ICON="🔵"
+        else
+            P_COLOR=$GREEN; P_ICON="🟢"
+        fi
+
+        anim=${frames[$((f_idx % ${#frames[@]}))]}
+        
+        printf "\r${CYAN}🚀 Converting: [${P_COLOR}%s${GRAY}%s${CYAN}] %3d%% ${anim} ${NC}\033[K" "$filled" "$empty" "$PCT"
+      fi
+    fi
+    f_idx=$((f_idx + 1))
+    sleep 0.5
+  done
+else
+  # INDETERMINATE PROGRESS BAR 
+  h_idx=0
+  while kill -0 $PID 2>/dev/null; do
+    anim=${frames[$((h_idx % ${#frames[@]}))]}
+    printf "\r${CYAN}🚀 Converting... %s (Please wait) ${NC}\033[K" "$anim"
+    h_idx=$((h_idx + 1))
+    sleep 0.2
+  done
+fi
+
+wait $PID
+EXIT_CODE=$?
+
+printf "\r\033[K"
+
+if [ $EXIT_CODE -eq 0 ]; then
+  printf "\n${GREEN}🎉 Conversion Completed Successfully!${NC}\n\n"
+  printf "${WHITE}📄 Output File:${NC}\n"
+  printf "${BOLD}${BLUE}%s${NC}\n\n" "$OUTPUT_FILE"
+  rm -f "$ERROR_LOG" "$FFMPEG_LOG"
+else
+  printf "\n${RED}❌ Error: Conversion failed.${NC}\n\n"
+  printf "Check details below:\n"
+  cat "$ERROR_LOG"
+fi
