@@ -339,8 +339,10 @@ elif [[ "jpg jpeg png webp bmp gif tiff ico heic svg" =~ "$EXT" || "jpg jpeg png
   CMD="magick \"$FILE\" $ARGS \"$OUTPUT_FILE\""
 
 elif [[ "docx doc xlsx xls pptx ppt odt ods csv" =~ "$EXT" || "docx doc xlsx xls pptx ppt odt ods csv" =~ "$TARGET_EXT" ]]; then
-  TEMP_OUT="${FILENAME}.${TARGET_EXT}"
-  CMD="libreoffice --headless --convert-to $TARGET_EXT \"$FILE\" && mv \"$TEMP_OUT\" \"$OUTPUT_FILE\" 2>/dev/null"
+  printf "${MAGENTA} Converting document...${NC}\n"
+  # إضافة --outdir عشان نضمن الملف يخرج في نفس المكان
+  CMD="libreoffice --headless --convert-to $TARGET_EXT --outdir . \"$FILE\""
+  OUTPUT_FILE="${FILENAME}.${TARGET_EXT}"
 
 elif [[ "epub mobi azw3 fb2" =~ "$EXT" || "epub mobi azw3 fb2" =~ "$TARGET_EXT" ]]; then
   CMD="ebook-convert \"$FILE\" \"$OUTPUT_FILE\""
@@ -377,9 +379,9 @@ if [ "$USE_REAL_PROGRESS" = true ]; then
         empty_len=$(( bar_width - filled_len ))
         
         filled=""
-        [ $filled_len -gt 0 ] && filled=$(printf "%${filled_len}s" | tr ' ' '#')
+        [ $filled_len -gt 0 ] && filled=$(printf "%${filled_len}s" | tr ' ' '█')
         empty=""
-        [ $empty_len -gt 0 ] && empty=$(printf "%${empty_len}s" | tr ' ' '-')
+        [ $empty_len -gt 0 ] && empty=$(printf "%${empty_len}s" | tr ' ' '░')
         
         if [ "$PCT" -le 25 ]; then
             P_COLOR=$RED; P_ICON="🔴"
