@@ -5,9 +5,11 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Open Source](https://img.shields.io/badge/Open_Source-Yes-success?style=for-the-badge)
 
+Introducing **TConvert**, the world’s most private and lightning-fast local file converter. It empowers you to convert absolutely any file type in mere seconds with just 4 keystrokes—100% free, and with no need to install complex, resource-heavy, or bloated software. By running entirely offline directly on your personal machine, TConvert guarantees maximum security and absolute privacy for your data. It’s so secure and reliable, you could comfortably process Obama and Trump's classified work files on it without batting an eye!
+
 **TConvert** is a powerful, interactive, and user-friendly command-line tool designed to convert and compress almost any file type (Videos, Audio, Images, Documents, and E-books). 
 
-💡 *Crafted to save time, cure "Terminal Phobia," and make the CLI your best friend!* This script is the ultimate lightweight replacement for heavy GUI software and massive Docker containers.
+Crafted to save time, cure "Terminal Phobia," and make the CLI your best friend!* This script is the ultimate lightweight replacement for heavy GUI software and massive Docker containers.
 
 ---
 
