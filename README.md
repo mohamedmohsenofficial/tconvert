@@ -126,7 +126,7 @@ tconvert
 
 * **MIT License:** Free to use, modify, and distribute.
 * **GitHub:** [@mohamedmohsenofficial](https://github.com/mohamedmohsenofficial)
-* **LinkedIn:** [Mohamed Mohsen](https://www.google.com/search?q=https://www.linkedin.com/in/mohamedmohsenofficial)
+* **LinkedIn:** [Mohamed Mohsen](https://www.linkedin.com/in/mohsenofficial)
 
 ---
 
