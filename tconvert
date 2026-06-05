@@ -140,11 +140,11 @@ EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
 TYPE=""
 declare -a SUGGESTIONS
 
-# Bulletproof Engine Mapping
+# Bulletproof Engine Mapping (100% Guaranteed Pairs)
 case "$EXT" in
   pdf|pdf/a)
     TYPE="document"
-    SUGGESTIONS=(docx epub html txt jpg png bmp tiff)
+    SUGGESTIONS=(jpg png bmp tiff webp epub mobi azw3)
     ;;
   doc|docx|odt)
     TYPE="document"
@@ -154,10 +154,13 @@ case "$EXT" in
     TYPE="presentation"
     SUGGESTIONS=(pdf odp html txt)
     ;;
-  # THE NEW DATA SECTION (Powered by Python Pandas)
-  xls|xlsx|ods|csv|tsv|json|jsonl|parquet|xml)
+  xls|xlsx|ods|csv|tsv)
+    TYPE="spreadsheet"
+    SUGGESTIONS=(pdf csv tsv json jsonl parquet html md xml xlsx)
+    ;;
+  json|jsonl|parquet|xml)
     TYPE="data"
-    SUGGESTIONS=(csv tsv json jsonl parquet xlsx html md xml pdf)
+    SUGGESTIONS=(csv tsv json jsonl parquet xlsx html md xml)
     ;;
   mp4|mkv|avi|mov|webm|flv|wmv|3gp|ts|m4v|mpeg|ogv|asf|f4v)
     TYPE="video"
@@ -303,11 +306,11 @@ printf "${MAGENTA}⚙️  Preparing engines...${NC}\n\n"
 sleep 1
 
 # ==========================================
-# BULLETPROOF ENGINE ROUTING (Strict matching)
+# STRICT ENGINE ROUTING (Error-Free Zone)
 # ==========================================
 
-# 1. FFmpeg (Video/Audio)
-if [[ " 3gp aac ac3 aiff apng asf avi f4v flac flv m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "video" || "$TYPE" == "audio" ]]; then
+# 1. FFmpeg (Video/Audio + GIF)
+if [[ " 3gp aac ac3 aiff apng asf avi f4v flac flv gif m4a m4v mka mkv mov mp2 mp3 mp4 mpeg oga ogv opus ts wav webm wma wmv " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "video" || "$TYPE" == "audio" ]]; then
   if [ "$IS_TARGET_AUDIO" = true ] && [ "$EXT" != "$TARGET_EXT" ]; then
     ARGS="-vn "
   fi
@@ -350,7 +353,7 @@ if [[ " 3gp aac ac3 aiff apng asf avi f4v flac flv m4a m4v mka mkv mov mp2 mp3 m
     CMD="ffmpeg -i \"$FILE\" $ARGS \"$OUTPUT_FILE\" -y"
   fi
 
-# 2. ImageMagick (Images)
+# 2. ImageMagick (Images + PDF to Image)
 elif [[ " apng bmp dds dib eps gif heic heif icns ico jp2 jpeg jxl pbm pcx pfm pgm png pnm ppm psd sgi svg tga tiff webp xbm xpm pdf " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "image" || "$EXT" == "pdf" ]]; then
   if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
     if [ "$COMP_METHOD" == "1" ] && [ -n "$COMP_PERCENT" ]; then
@@ -395,26 +398,15 @@ elif [[ " zip cbz tar tar.gz tar.bz2 tar.xz tgz " =~ " $TARGET_EXT " ]]; then
     CMD+="tar -cJf \"\$ABS_OUTPUT\" .) && rm -rf \"\$TEMP_DIR\""
   fi
 
-# 4. Calibre (E-books)
+# 4. Calibre (E-books + PDF to Ebook)
 elif [[ " epub mobi azw3 fb2 kepub lrf pdb snb " =~ " $TARGET_EXT " ]] || [[ "$TYPE" == "ebook" && " epub mobi azw3 fb2 kepub lrf pdb snb docx rtf txt pdf " =~ " $TARGET_EXT " ]]; then
   CMD="ebook-convert \"$FILE\" \"$OUTPUT_FILE\""
 
-# 5. Pandoc & LibreOffice (Documents, Presentations, simple text)
-elif [[ " docx odt pptx odp pdf rtf tex " =~ " $TARGET_EXT " ]] && [[ "$TYPE" != "data" ]]; then
-  if [[ "$TYPE" == "text" ]]; then
-    CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
-  else
-    printf "${MAGENTA}🔄 Converting document...${NC}\n"
-    CMD="libreoffice --headless --convert-to $TARGET_EXT --outdir . \"$FILE\""
-    OUTPUT_FILE="${FILENAME}.${TARGET_EXT}"
-  fi
-
-# 6. PYTHON DATA ENGINE (The 8000+ Formats Secret Weapon) 🐍
-elif [[ "$TYPE" == "data" ]] || [[ " csv tsv json jsonl parquet xlsx xml html md " =~ " $TARGET_EXT " ]]; then
+# 5. PYTHON DATA ENGINE (Data & Spreadsheets)
+elif [[ " csv tsv json jsonl parquet xlsx xml html md " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "data" || "$TYPE" == "spreadsheet" ]]; then
   printf "${MAGENTA}🐍 Firing up Python Data Engine...${NC}\n"
   
   PYTHON_SCRIPT="/tmp/tconvert_data_engine.py"
-  # Embedding Python code inside the Bash script dynamically
   cat << 'EOF' > "$PYTHON_SCRIPT"
 import sys
 try:
@@ -428,7 +420,6 @@ def convert(input_path, output_path):
     ext_out = output_path.split('.')[-1].lower()
     
     try:
-        # Read the Data
         if ext_in in ['csv']:
             df = pd.read_csv(input_path)
         elif ext_in in ['tsv']:
@@ -450,7 +441,6 @@ def convert(input_path, output_path):
             print(f"❌ Unsupported input data format: {ext_in}")
             sys.exit(1)
             
-        # Write the Data
         if ext_out == 'csv':
             df.to_csv(output_path, index=False)
         elif ext_out == 'tsv':
@@ -482,6 +472,16 @@ if __name__ == "__main__":
 EOF
 
   CMD="python3 \"$PYTHON_SCRIPT\" \"$FILE\" \"$OUTPUT_FILE\""
+
+# 6. LibreOffice & Pandoc (Documents & Spreadsheet to PDF)
+elif [[ " docx odt pptx odp pdf rtf tex " =~ " $TARGET_EXT " ]] && [[ "$TYPE" != "data" ]]; then
+  if [[ "$TYPE" == "text" ]]; then
+    CMD="pandoc \"$FILE\" -o \"$OUTPUT_FILE\""
+  else
+    printf "${MAGENTA}🔄 Converting document...${NC}\n"
+    CMD="libreoffice --headless --convert-to $TARGET_EXT --outdir . \"$FILE\""
+    OUTPUT_FILE="${FILENAME}.${TARGET_EXT}"
+  fi
 
 else
   printf "${RED}❌ Error: Format engine routing failed. Target format not currently supported.${NC}\n"
