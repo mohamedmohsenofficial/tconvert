@@ -58,13 +58,13 @@ sudo pacman -S ffmpeg imagemagick libreoffice-fresh calibre pandoc
 
 ## 🏆 TConvert vs. The Rest
 
-| Feature | 🎭 TConvert | 🐳 Docker Solutions | 🖥️ GUI Apps | ☁️ Online Converters |
+| Feature | TConvert | Docker Solutions | GUI Apps | Online Converters |
 | --- | --- | --- | --- | --- |
 | **Storage Size** | **~15 KB** | ~5.0 GB | ~100+ MB | 0 MB |
-| **Offline Use** | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
-| **All-in-One Capability** | ✅ Yes (All files) | ✅ Yes (All files) | ❌ No (Media only) | ✅ Yes |
-| **Speed & Performance** | ⚡ Native & Fast | 🐢 Containerized overhead | ⚡ Native | 🐌 Depends on internet |
-| **Privacy** | 🔒 100% Local | 🔒 100% Local | 🔒 100% Local | ⚠️ Uploads your files |
+| **Offline Use** | Yes | Yes | Yes | No |
+| **All-in-One Capability** | All files | Yes | No | Yes |
+| **Speed & Performance** | Native & Fast | Containerized overhead | Native | Depends on internet |
+| **Privacy** | 100% Local | 100% Local | 100% Local | Uploads your files |
 
 ---
 
