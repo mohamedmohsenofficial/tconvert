@@ -4,7 +4,7 @@
 # 🎭 TConvert - Universal File Converter
 </div>
 
-![Version](https://img.shields.io/badge/Version-1.0.0-orange?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-2.0.0-orange?style=for-the-badge)
 ![Bash](https://img.shields.io/badge/Language-Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Open Source](https://img.shields.io/badge/Open_Source-Yes-success?style=for-the-badge)
@@ -32,25 +32,33 @@ People choose TConvert because it solves the biggest problems with modern conver
 * `libreoffice` (For Documents & Spreadsheets)
 * `calibre` (For E-books)
 * `pandoc` (For Text/Markdown files)
+* `python3 & pandas` (For Complex Data formats like JSON, Parquet, etc.)
 
 **Debian/Ubuntu (apt):**
 ```bash
 sudo apt update
-sudo apt install ffmpeg imagemagick libreoffice calibre pandoc
+sudo apt install ffmpeg imagemagick libreoffice calibre pandoc python3-pandas
 
 ```
 
 **Fedora/RHEL (dnf):**
 
 ```bash
-sudo dnf install ffmpeg ImageMagick libreoffice calibre pandoc
+sudo dnf install ffmpeg ImageMagick libreoffice calibre pandoc python3-pandas python3-openpyxl python3-pyarrow python3-lxml
 
 ```
 
 **Arch Linux (pacman):**
 
 ```bash
-sudo pacman -S ffmpeg imagemagick libreoffice-fresh calibre pandoc
+sudo pacman -S ffmpeg imagemagick libreoffice-fresh calibre pandoc python-pandas python-openpyxl python-pyarrow python-lxml
+
+```
+
+*(Optional: You can also install the Python data dependencies via pip)*
+
+```bash
+pip install pandas openpyxl pyarrow lxml
 
 ```
 
@@ -60,7 +68,7 @@ sudo pacman -S ffmpeg imagemagick libreoffice-fresh calibre pandoc
 
 | Feature | TConvert | Docker Solutions | GUI Apps | Online Converters |
 | --- | --- | --- | --- | --- |
-| **Storage Size** | **~15 KB** | ~5.0 GB | ~100+ MB | 0 MB |
+| **Storage Size** | **~20 KB** | ~5.0 GB | ~100+ MB | 0 MB |
 | **Offline Use** | Yes | Yes | Yes | No |
 | **All-in-One Capability** | All files | Yes | No | Yes |
 | **Speed & Performance** | Native & Fast | Containerized overhead | Native | Depends on internet |
@@ -77,9 +85,11 @@ TConvert automatically detects your file type and routes it to the correct engin
 | 🎥 **Video** | `mp4`, `mkv`, `avi`, `webm`, `mov`, `flv`, `wmv`, `3gp`, `ts`, `m4v` | `FFmpeg` |
 | 🎵 **Audio** | `mp3`, `wav`, `flac`, `m4a`, `aac`, `ogg`, `wma`, `opus` | `FFmpeg` |
 | 🖼️ **Images** | `jpg`, `png`, `webp`, `bmp`, `gif`, `tiff`, `ico`, `heic`, `svg` | `ImageMagick` |
-| 📄 **Documents** | `docx`, `pdf`, `xlsx`, `csv`, `pptx`, `odt`, `ods`, `html` | `LibreOffice` |
+| 📄 **Documents** | `docx`, `pdf`, `pptx`, `odt`, `odp` | `LibreOffice` |
+| 📊 **Data** | `csv`, `tsv`, `json`, `jsonl`, `parquet`, `xlsx`, `xml` | `Python (Pandas)` |
 | 📚 **E-books** | `epub`, `mobi`, `azw3`, `pdf`, `fb2` | `Calibre` |
 | 📝 **Text** | `md`, `txt`, `rtf` | `Pandoc` |
+| 📦 **Archives** | `zip`, `cbz`, `tar`, `tar.gz`, `tar.bz2`, `tar.xz` | `Native Linux (zip/tar)` |
 
 *(Note: You can type manual extensions outside this list, and TConvert will try its best to process them!)*
 
@@ -126,7 +136,7 @@ tconvert
 
 * **MIT License:** Free to use, modify, and distribute.
 * **GitHub:** [@mohamedmohsenofficial](https://github.com/mohamedmohsenofficial)
-* **LinkedIn:** [Mohamed Mohsen](https://www.linkedin.com/in/mohsenofficial)
+* **LinkedIn:** [Mohamed Mohsen](https://www.linkedin.com/in/mohamedmohsenofficial)
 
 ---
 
