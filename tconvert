@@ -6,7 +6,7 @@
 # ==============================================================================
 
 # --- VERSION CONTROL ---
-VERSION="1.0.0"
+VERSION="1.0.1"
 REPO_URL="https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert"
 
 # Terminal colors and styles
