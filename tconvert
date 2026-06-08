@@ -31,7 +31,7 @@ printf "${WHITE}Introducing TConvert, the world’s most private and lightning-f
 
 printf " Designed with :   ${BOLD}Mohamed Mohsen${NC} & the amazing open-source community!  ❤️\n\n"
 printf " GitHub :          ${CYAN}https://github.com/mohamedmohsenofficial/tconvert${NC}\n\n"
-printf " LinkedIn :        ${CYAN}https://linkedin.com/in/mohamedmohsenofficial${NC}\n\n"
+printf " LinkedIn :        ${CYAN}https://linkedin.com/in/mohsenofficial${NC}\n\n"
 printf " Version :         ${YELLOW}v${VERSION} (With Python Data Engine 🐍)${NC}\n\n"
 sleep 0.5
 
