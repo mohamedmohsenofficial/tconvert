@@ -10,7 +10,7 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Open Source](https://img.shields.io/badge/Open_Source-Yes-success?style=for-the-badge)
 
-**TConvert** is a fast, offline command-line tool that allows you to convert and compress almost any file type directly on your machine. 
+**tconvert** is a fast, offline command-line tool that allows you to convert and compress almost any file type directly on your machine. 
 
 It is completely free, requires no cloud uploads, and keeps your data 100% private. Instead of dealing with complex GUI applications or memorizing long terminal commands, TConvert provides a simple, interactive menu that builds and executes the complex underlying commands for you in seconds.
 
