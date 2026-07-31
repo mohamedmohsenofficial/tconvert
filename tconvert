@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --- VERSION CONTROL ---
-VERSION="2.0.2"
+VERSION="2.0.0"
 REPO_URL="https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert"
 
 BOLD='\033[1m'
@@ -41,23 +41,16 @@ if [[ -z "$REMOTE_VERSION" ]]; then
     printf "${YELLOW}Could not connect. Working offline.${NC}\n\n"
 elif [[ "$REMOTE_VERSION" != "$VERSION" ]]; then
     printf "\n${YELLOW}New version available: v${REMOTE_VERSION} ${RED}- Current: v${VERSION}${NC}\n\n"
-    printf "Do you want to install the update now? ${RED}- y/n:${NC} "
-    read UPDATE_CHOICE
-    if [[ "$UPDATE_CHOICE" =~ ^[Yy]$ ]]; then
-        printf "\n${MAGENTA}Downloading update...${NC}\n"
-        TEMP_FILE="/tmp/tconvert_update"
-        if curl -s -o "$TEMP_FILE" "$REPO_URL"; then
-            chmod +x "$TEMP_FILE"
-            printf "${YELLOW}Admin privileges might be required to apply the update.${NC}\n"
-            sudo mv "$TEMP_FILE" "$0"
-            printf "${GREEN}Update successful. Restarting TConvert...${NC}\n\n"
-            sleep 1
-            exec "$0" "$@"
-        else
-            printf "${RED}Update failed. Please try again later.${NC}\n\n"
-        fi
+    printf "${MAGENTA}Auto-updating TConvert...${NC}\n"
+    TEMP_FILE="/tmp/tconvert_update"
+    if curl -s -o "$TEMP_FILE" "$REPO_URL"; then
+        chmod +x "$TEMP_FILE"
+        sudo mv "$TEMP_FILE" "$0" 2>/dev/null || mv "$TEMP_FILE" "$0"
+        printf "${GREEN}Update successful. Restarting TConvert...${NC}\n\n"
+        sleep 1
+        exec "$0" "$@"
     else
-        printf "\n${GREEN}Continuing with current version...${NC}\n\n"
+        printf "${RED}Update failed. Proceeding with current version.${NC}\n\n"
     fi
 else
     printf "${GREEN}Up to date.${NC}\n\n"
@@ -456,7 +449,7 @@ while true; do
     fi
 
   # 2. ImageMagick (Images + PDF to Image)
-  elif [[ " apng bmp dds dib eps gif heic heif icns ico jp2 jpeg jxl pbm pcx pfm pgm png pnm ppm psd sgi svg tga tiff webp xbm xpm pdf " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "image" || "$EXT" == "pdf" ]]; then
+  elif [[ " apng bmp dds dib eps gif heic heif icns ico jp2 jpeg jpg jxl pbm pcx pfm pgm png pnm ppm psd sgi svg tga tiff webp xbm xpm pdf " =~ " $TARGET_EXT " ]] && [[ "$TYPE" == "image" || "$EXT" == "pdf" ]]; then
     if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
       if [ "$COMP_METHOD" == "1" ] && [ -n "$COMP_PERCENT" ]; then
         QUAL=$(( 100 - COMP_PERCENT ))
@@ -689,7 +682,11 @@ EOF
     printf "Target Met: ${TARGET_MET}\n\n"
 
     if [ "$TARGET_MET" == "No" ] && [ "$COMP_METHOD" == "2" ]; then
-        printf "${YELLOW}The file is too large for your machine to compress to that exact target. The program tried its best to reach the requested size, but this is the maximum reduction it could achieve.\n\nTo resolve this, change your requirements ${RED}- like increasing the target size or trimming the file${YELLOW} - or use a dedicated GUI program.${NC}\n\n"
+        printf "${YELLOW}The file is too large for your machine to compress to that exact target.\n"
+        printf "The program tried its best to reach the requested size, but this is the maximum reduction it could achieve.\n\n"
+        printf "To resolve this, change your requirements ${RED}- like increasing the target size or trimming the file${YELLOW}\n\n"
+        printf "or use a dedicated GUI program.\n\n"
+        printf "or rename the file to something simple ${RED}- e.g. 1.mp4, video.mp4, image.jpg${YELLOW}.${NC}\n\n"
     fi
 
     printf "${WHITE}Output File:${NC}\n"
