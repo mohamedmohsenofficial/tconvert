@@ -27,11 +27,11 @@ cat << "EOF"
 EOF
 printf "${NC}\n"
 
-printf "${WHITE}Welcome to TConvert. A fast, fully offline local file converter. Convert almost any file type in seconds directly on your machine. 100%% free, no limits, no cloud uploads, and absolute privacy for your data.\n${NC}\n"
+printf "${WHITE}Welcome to TConvert. A fast, offline local file converter. Convert files directly on your machine with absolute privacy.\n${NC}\n"
 printf " Designed with :   ${BOLD}Mohamed Mohsen${NC} & the open-source community\n"
 printf " GitHub :          ${CYAN}https://github.com/mohamedmohsenofficial/tconvert${NC}\n"
 printf " LinkedIn :        ${CYAN}https://linkedin.com/in/mohsenofficial${NC}\n"
-printf " Version :         ${YELLOW}v${VERSION} (Python Data Engine enabled)${NC}\n\n"
+printf " Version :         ${YELLOW}v${VERSION} ${RED}- Python Data Engine enabled${NC}\n\n"
 sleep 0.5
 
 printf "${CYAN}Checking for updates... ${NC}"
@@ -40,8 +40,8 @@ REMOTE_VERSION=$(curl -s --max-time 5 "$REPO_URL" | grep -m 1 '^VERSION=' | cut 
 if [[ -z "$REMOTE_VERSION" ]]; then
     printf "${YELLOW}Could not connect. Working offline.${NC}\n\n"
 elif [[ "$REMOTE_VERSION" != "$VERSION" ]]; then
-    printf "\n${YELLOW}New version available: v${REMOTE_VERSION} (Current: v${VERSION})${NC}\n\n"
-    printf "Do you want to install the update now? (y/n): "
+    printf "\n${YELLOW}New version available: v${REMOTE_VERSION} ${RED}- Current: v${VERSION}${NC}\n\n"
+    printf "Do you want to install the update now? ${RED}- y/n:${NC} "
     read UPDATE_CHOICE
     if [[ "$UPDATE_CHOICE" =~ ^[Yy]$ ]]; then
         printf "\n${MAGENTA}Downloading update...${NC}\n"
@@ -70,12 +70,12 @@ if [ ! -f "$CHECK_FILE" ]; then
   sleep 1
 
   MISSING_DEPS=()
-  if ! command -v ffmpeg &> /dev/null; then MISSING_DEPS+=("ffmpeg (For Video & Audio)"); fi
-  if ! command -v magick &> /dev/null; then MISSING_DEPS+=("imagemagick (For Images)"); fi
-  if ! command -v libreoffice &> /dev/null; then MISSING_DEPS+=("libreoffice (For Documents)"); fi
-  if ! command -v ebook-convert &> /dev/null; then MISSING_DEPS+=("calibre (For E-books)"); fi
-  if ! command -v pandoc &> /dev/null; then MISSING_DEPS+=("pandoc (For Text)"); fi
-  if ! python3 -c "import pandas" &> /dev/null; then MISSING_DEPS+=("python3-pandas (For Data: JSON, Parquet, etc)"); fi
+  if ! command -v ffmpeg &> /dev/null; then MISSING_DEPS+=("ffmpeg ${RED}- For Video & Audio${NC}"); fi
+  if ! command -v magick &> /dev/null; then MISSING_DEPS+=("imagemagick ${RED}- For Images${NC}"); fi
+  if ! command -v libreoffice &> /dev/null; then MISSING_DEPS+=("libreoffice ${RED}- For Documents${NC}"); fi
+  if ! command -v ebook-convert &> /dev/null; then MISSING_DEPS+=("calibre ${RED}- For E-books${NC}"); fi
+  if ! command -v pandoc &> /dev/null; then MISSING_DEPS+=("pandoc ${RED}- For Text${NC}"); fi
+  if ! python3 -c "import pandas" &> /dev/null; then MISSING_DEPS+=("python3-pandas ${RED}- For Data: JSON, Parquet, etc${NC}"); fi
 
   if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
     printf "\n\n${YELLOW}NOTICE: SOME ENGINES ARE MISSING${NC}\n"
@@ -85,8 +85,8 @@ if [ ! -f "$CHECK_FILE" ]; then
       printf " - ${RED}%s${NC}\n" "$dep"
     done
     
-    printf "\n${GRAY}(Tip for Data Engine: pip install pandas openpyxl pyarrow lxml)${NC}\n"
-    printf "\nDo you want to continue with the installed engines only? (y/n): "
+    printf "\n${GRAY}Tip for Data Engine: pip install pandas openpyxl pyarrow lxml${NC}\n"
+    printf "\nDo you want to continue with the installed engines only? ${RED}- y/n:${NC} "
     read CONTINUE_CHOICE
     
     if [[ "$CONTINUE_CHOICE" =~ ^[Yy]$ ]]; then
@@ -121,7 +121,7 @@ while true; do
   TRIM_START=0
   TRIM_END=0
 
-  printf "${BOLD}Enter file name (with extension): ${NC}"
+  printf "${BOLD}Enter file name ${RED}- with extension:${NC} "
   read FILE
 
   printf "\n${MAGENTA}Analyzing file...${NC}\n\n"
@@ -209,9 +209,9 @@ while true; do
   sleep 0.5
 
   printf "${BOLD}${CYAN}What would you like to do?${NC}\n\n"
-  printf "  1) Convert to a new format (and optionally compress)\n"
-  printf "  2) Compress only (keep original format)\n\n"
-  printf "Choice (1 or 2): "
+  printf "  1. Convert to a new format ${RED}- and optionally compress${NC}\n\n"
+  printf "  2. Compress only ${RED}- keep original format${NC}\n\n"
+  printf "Choice: "
   read ACTION_CHOICE
   printf "\n"
 
@@ -219,17 +219,17 @@ while true; do
     printf "${BOLD}${WHITE}Suggested formats for this file:${NC}\n\n"
     
     for i in "${!SUGGESTIONS[@]}"; do
-      printf "  %d. %s\n" $((i+1)) "${SUGGESTIONS[$i]}"
+      printf "  %d. %s\n\n" $((i+1)) "${SUGGESTIONS[$i]}"
     done
     printf "  0. Type a custom format manually\n\n"
 
-    printf "Enter the number of your choice: "
+    printf "Choice: "
     read CHOICE
     
     if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [ "$CHOICE" -gt 0 ] && [ "$CHOICE" -le "${#SUGGESTIONS[@]}" ]; then
       TARGET_EXT="${SUGGESTIONS[$((CHOICE-1))]}"
     elif [ "$CHOICE" == "0" ]; then
-      printf "Type the format manually (e.g. mp4): "
+      printf "Type the format manually ${RED}- e.g. mp4:${NC} "
       read TARGET_EXT
     else
       TARGET_EXT="$CHOICE"
@@ -240,7 +240,7 @@ while true; do
     printf "\n"
 
     if [[ "$TYPE" == "video" || "$TYPE" == "audio" || "$TYPE" == "image" ]]; then
-      printf "Do you want to compress the file? (y/n): "
+      printf "Do you want to compress the file? ${RED}- y/n:${NC} "
       read DO_COMPRESS
       printf "\n"
     fi
@@ -260,19 +260,19 @@ while true; do
 
   if [[ "$DO_COMPRESS" =~ ^[Yy]$ ]]; then
     printf "${BOLD}${CYAN}Choose compression method:${NC}\n\n"
-    printf "  1) By Percentage (%%)\n"
-    printf "  2) By Target Size\n\n"
-    printf "Choice (1 or 2): "
+    printf "  1. By Percentage %%\n\n"
+    printf "  2. By Target Size\n\n"
+    printf "Choice: "
     read COMP_METHOD
     printf "\n"
 
     if [ "$COMP_METHOD" == "1" ]; then
       printf "${BOLD}${CYAN}Choose compression level:${NC}\n\n"
-      printf "  1) High Quality (Light compression ~ 20%% reduction)\n"
-      printf "  2) Medium Quality (Balanced ~ 50%% reduction)\n"
-      printf "  3) Low Quality (Heavy compression ~ 80%% reduction)\n"
-      printf "  0) Custom Percentage\n\n"
-      printf "Choice (0-3): "
+      printf "  1. High Quality ${RED}- Light compression, ~ 20%% reduction${NC}\n\n"
+      printf "  2. Medium Quality ${RED}- Balanced, ~ 50%% reduction${NC}\n\n"
+      printf "  3. Low Quality ${RED}- Heavy compression, ~ 80%% reduction${NC}\n\n"
+      printf "  0. Custom Percentage\n\n"
+      printf "Choice: "
       read COMP_CHOICE
       printf "\n"
 
@@ -280,17 +280,17 @@ while true; do
         1) COMP_PERCENT=20 ;;
         2) COMP_PERCENT=50 ;;
         3) COMP_PERCENT=80 ;;
-        0) printf "Enter custom compression percentage (1-100): "; read COMP_PERCENT; printf "\n" ;;
+        0) printf "Enter custom compression percentage ${RED}- 1 to 100:${NC} "; read COMP_PERCENT; printf "\n" ;;
         *) printf "Invalid. Defaulting to 50%%.\n\n"; COMP_PERCENT=50 ;;
       esac
     elif [ "$COMP_METHOD" == "2" ]; then
       printf "${BOLD}${CYAN}Select Target Size:${NC}\n\n"
-      printf "  1) 8 MB\n"
-      printf "  2) 25 MB\n"
-      printf "  3) 50 MB\n"
-      printf "  4) 100 MB\n"
-      printf "  5) Custom Value\n\n"
-      printf "Choice (1-5): "
+      printf "  1. 8 MB\n\n"
+      printf "  2. 25 MB\n\n"
+      printf "  3. 50 MB\n\n"
+      printf "  4. 100 MB\n\n"
+      printf "  5. Custom Value\n\n"
+      printf "Choice: "
       read TS_CHOICE
       printf "\n"
 
@@ -300,11 +300,18 @@ while true; do
         3) TARGET_KB=$((50 * 1024)) ;;
         4) TARGET_KB=$((100 * 1024)) ;;
         5)
-          printf "Enter the numerical size value: "
-          read CUSTOM_NUM
-          printf "Select Unit:  1) KB   2) MB   3) GB: "
+          printf "${BOLD}${CYAN}Select Unit:${NC}\n\n"
+          printf "  1. KB\n\n"
+          printf "  2. MB\n\n"
+          printf "  3. GB\n\n"
+          printf "Choice: "
           read UNIT_CHOICE
           printf "\n"
+          
+          printf "Enter the numerical value: "
+          read CUSTOM_NUM
+          printf "\n"
+          
           if [ "$UNIT_CHOICE" == "1" ]; then TARGET_KB=$CUSTOM_NUM
           elif [ "$UNIT_CHOICE" == "2" ]; then TARGET_KB=$((CUSTOM_NUM * 1024))
           elif [ "$UNIT_CHOICE" == "3" ]; then TARGET_KB=$((CUSTOM_NUM * 1024 * 1024))
@@ -322,14 +329,14 @@ while true; do
 
   # Advanced Settings
   if [[ "$TYPE" == "video" || "$TYPE" == "audio" ]]; then
-    printf "${BOLD}${CYAN}Advanced Settings${NC}\n"
-    printf "Leave blank and press Enter to skip, or type numbers separated by comma (e.g. 1,4)\n\n"
+    printf "${BOLD}${CYAN}Advanced Settings${NC}\n\n"
+    printf "Leave blank and press Enter to skip, or type numbers separated by comma ${RED}- e.g. 1,4${NC}\n\n"
     if [[ "$TYPE" == "video" ]]; then
-      printf "  1) Audio Only Mode (Process audio only - keep original video without compression and modify sound)\n"
-      printf "  2) Mute Sound (Completely remove the audio track from the video)\n"
-      printf "  3) Preserve Original FPS (Keep the video's original framerate instead of reducing it)\n"
+      printf "  1. Process Audio Only ${RED}- keep original video and modify sound${NC}\n\n"
+      printf "  2. Remove Audio Track ${RED}- strip audio from video${NC}\n\n"
+      printf "  3. Keep Original FPS ${RED}- prevent framerate drops${NC}\n\n"
     fi
-    printf "  4) Trim Media (Remove the specified number of seconds from the beginning and/or end)\n\n"
+    printf "  4. Trim Media Length ${RED}- remove seconds from start or end${NC}\n\n"
     printf "Choices: "
     read ADV_OPTS
     printf "\n"
@@ -339,9 +346,9 @@ while true; do
     if [[ "$ADV_OPTS" == *"3"* && "$TYPE" == "video" ]]; then ADV_PRESERVE_FPS=true; fi
     if [[ "$ADV_OPTS" == *"4"* ]]; then
         ADV_TRIM=true
-        printf "Seconds to remove from the START (Enter 0 to skip): "
+        printf "Seconds to remove from the START ${RED}- Enter 0 to skip:${NC} "
         read TRIM_START
-        printf "Seconds to remove from the END (Enter 0 to skip): "
+        printf "Seconds to remove from the END ${RED}- Enter 0 to skip:${NC} "
         read TRIM_END
         printf "\n"
     fi
@@ -363,6 +370,10 @@ while true; do
 
   printf "${MAGENTA}Preparing engines...${NC}\n\n"
   sleep 1
+  
+  # Calculate Original Size Before Execution for calculations
+  ORIG_BYTES=$(stat -c%s "$FILE" 2>/dev/null || stat -f%z "$FILE" 2>/dev/null)
+  if [ -z "$ORIG_BYTES" ]; then ORIG_BYTES=0; fi
 
   # ==========================================
   # STRICT ENGINE ROUTING (Error-Free Zone)
@@ -452,7 +463,7 @@ while true; do
         if [ "$QUAL" -lt 1 ]; then QUAL=1; fi
         ARGS="-quality $QUAL"
       elif [ "$COMP_METHOD" == "2" ] && [ -n "$TARGET_KB" ]; then
-        ORIG_KB=$(du -k "$FILE" | cut -f1)
+        ORIG_KB=$((ORIG_BYTES / 1024))
         if [ -n "$ORIG_KB" ] && [ "$ORIG_KB" -gt 0 ]; then
             QUAL=$(( (TARGET_KB * 100) / ORIG_KB ))
             if [ "$QUAL" -gt 100 ]; then QUAL=100; fi
@@ -588,10 +599,6 @@ EOF
   fi
 
   ERROR_LOG="/tmp/tconvert_error.log"
-  
-  # Calculate Original Size Before Execution
-  ORIG_BYTES=$(stat -c%s "$FILE" 2>/dev/null || stat -f%z "$FILE" 2>/dev/null)
-  if [ -z "$ORIG_BYTES" ]; then ORIG_BYTES=0; fi
 
   eval $CMD > "$ERROR_LOG" 2>&1 &
   PID=$!
@@ -682,7 +689,7 @@ EOF
     printf "Target Met: ${TARGET_MET}\n\n"
 
     if [ "$TARGET_MET" == "No" ] && [ "$COMP_METHOD" == "2" ]; then
-        printf "${YELLOW}The file size is simply too large for your machine's capabilities to be modified by TConvert to that exact target. The program tried its absolute best to reach your requested size, but this is the maximum reduction it could achieve based on your requirements.\n\nTo resolve this, you can either change your requests (like slightly increasing the target size or trimming the file), or use a dedicated GUI program which might give you better control.${NC}\n\n"
+        printf "${YELLOW}The file is too large for your machine to compress to that exact target. The program tried its best to reach the requested size, but this is the maximum reduction it could achieve.\n\nTo resolve this, change your requirements ${RED}- like increasing the target size or trimming the file${YELLOW} - or use a dedicated GUI program.${NC}\n\n"
     fi
 
     printf "${WHITE}Output File:${NC}\n"
@@ -694,7 +701,7 @@ EOF
     cat "$ERROR_LOG"
   fi
 
-  printf "\n${BOLD}Do you want to process another file? (y/n): ${NC}"
+  printf "\n${BOLD}Do you want to process another file? ${RED}- y/n:${NC} "
   read DO_ANOTHER
   if [[ ! "$DO_ANOTHER" =~ ^[Yy]$ ]]; then
     printf "\n${GREEN}Thanks for using TConvert! Goodbye.${NC}\n\n"
