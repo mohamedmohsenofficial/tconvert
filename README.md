@@ -95,11 +95,54 @@ TConvert detects your file type and routes it to the appropriate engine:
 
 ## 🚀 Installation & Updating
 
-**Installation:**
-Run this single command to download TConvert, make it executable, and move it to your system binaries:
+**Debian / Ubuntu:**
 
 ```bash
-sudo curl -L "[https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert](https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert)" -o /usr/local/bin/tconvert && sudo chmod +x /usr/local/bin/tconvert
+# 1. Install the required dependencies and conversion engines on Debian / Ubuntu
+sudo apt update && sudo apt install -y ffmpeg imagemagick libreoffice calibre pandoc python3-pandas
+
+# 2. Download the TConvert script directly from the official repository
+wget https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert
+
+# 3. Make the script executable
+chmod +x tconvert
+
+# 4. Move it to the system's bin folder to make it accessible globally
+sudo mv tconvert /usr/local/bin/
+
+```
+
+**Fedora:**
+
+```bash
+# 1. Install the required dependencies and conversion engines on Fedora
+sudo dnf install -y ffmpeg ImageMagick libreoffice calibre pandoc python3-pandas python3-openpyxl python3-pyarrow python3-lxml
+
+# 2. Download the TConvert script directly from the official repository
+wget https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert
+
+# 3. Make the script executable
+chmod +x tconvert
+
+# 4. Move it to the system's bin folder to make it accessible globally
+sudo mv tconvert /usr/local/bin/
+
+```
+
+**Arch Linux:**
+
+```bash
+# 1. Install the required dependencies and conversion engines on Arch Linux
+sudo pacman -S --noconfirm ffmpeg imagemagick libreoffice-fresh calibre pandoc python-pandas python-openpyxl python-pyarrow python-lxml
+
+# 2. Download the TConvert script directly from the official repository
+wget https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert
+
+# 3. Make the script executable
+chmod +x tconvert
+
+# 4. Move it to the system's bin folder to make it accessible globally
+sudo mv tconvert /usr/local/bin/
 
 ```
 
