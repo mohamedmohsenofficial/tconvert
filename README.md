@@ -1,7 +1,8 @@
+
 <div align="center">
   <img src="Images/Tconvert.png" alt="TConvert Logo" width="2000">
 
-# 🎭 TConvert - Universal File Converter
+# 🎭 TConvert - Local File Converter
 </div>
 
 ![Version](https://img.shields.io/badge/Version-2.0.0-orange?style=for-the-badge)
@@ -9,30 +10,30 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Open Source](https://img.shields.io/badge/Open_Source-Yes-success?style=for-the-badge)
 
-Introducing **TConvert**, the world’s most private and lightning-fast local file converter. It empowers you to convert absolutely any file type in mere seconds with just 4 keystrokes—100% free, and with no need to install complex, resource-heavy, or bloated software. 
+**TConvert** is a fast, offline command-line tool that allows you to convert and compress almost any file type directly on your machine. 
 
-By running entirely offline directly on your personal machine, TConvert guarantees maximum security and absolute privacy for your data. It’s so secure and reliable, you could comfortably process Obama and Trump's classified work files on it without batting an eye! 🛡️
+It is completely free, requires no cloud uploads, and keeps your data 100% private. Instead of dealing with complex GUI applications or memorizing long terminal commands, TConvert provides a simple, interactive menu that builds and executes the complex underlying commands for you in seconds.
 
 ---
 
 ## 🌟 Why Choose TConvert?
-People choose TConvert because it solves the biggest problems with modern converters:
-* 🔒 **Absolute Privacy:** Your files never leave your computer. No sketchy online uploads, no data collection.
-* 🧠 **No Memorization Needed:** Forget about complex `ffmpeg` or `magick` terminal commands. TConvert asks you simple questions and builds the complex commands under the hood.
-* ⚡ **Blazing Fast:** No heavy GUI (Graphical User Interface) draining your RAM or CPU. It communicates directly with your system's core.
-* 🪶 **Featherweight:** A ~15 KB script that replaces gigabytes of heavy desktop applications and docker containers.
+
+* 🔒 **Absolute Privacy:** Your files never leave your local machine. No online uploads, no tracking, no data collection.
+* 🧠 **No Memorization Needed:** Forget about complex `ffmpeg` or `magick` flags. TConvert asks you simple questions and handles the heavy lifting under the hood.
+* ⚡ **Performance Focused:** No heavy graphical interface draining your RAM or CPU. It communicates directly with your system's core engines.
+* 🪶 **Featherweight:** A single lightweight script that replaces gigabytes of heavy desktop applications.
 
 ---
 
-## ⚠️ CRITICAL NOTICE: DEPENDENCIES REQUIRED FIRST
-`TConvert` acts as a highly intelligent central commander for your system's existing conversion engines. **Nothing will work if you do not install the required libraries first.** You MUST install the following open-source engines on your system before running the tool:
+## ⚠️ CRITICAL NOTICE: DEPENDENCIES
+`TConvert` acts as a central commander for your system's existing conversion engines. **It requires the following open-source engines to be installed on your system to function properly:**
 
-* `ffmpeg` (For Video & Audio processing)
-* `imagemagick` (For Image processing)
-* `libreoffice` (For Documents & Spreadsheets)
+* `ffmpeg` (For Video & Audio)
+* `imagemagick` (For Images)
+* `libreoffice` (For Documents & Presentations)
 * `calibre` (For E-books)
-* `pandoc` (For Text/Markdown files)
-* `python3 & pandas` (For Complex Data formats like JSON, Parquet, etc.)
+* `pandoc` (For Text/Markdown)
+* `python3 & pandas` (For Data formats like JSON, Parquet, CSV)
 
 **Debian/Ubuntu (apt):**
 ```bash
@@ -55,7 +56,7 @@ sudo pacman -S ffmpeg imagemagick libreoffice-fresh calibre pandoc python-pandas
 
 ```
 
-*(Optional: You can also install the Python data dependencies via pip)*
+*(Optional: Install Python dependencies via pip if not using system packages)*
 
 ```bash
 pip install pandas openpyxl pyarrow lxml
@@ -64,21 +65,20 @@ pip install pandas openpyxl pyarrow lxml
 
 ---
 
-## 🏆 TConvert vs. The Rest
+## 🏆 TConvert vs. Alternatives
 
 | Feature | TConvert | Docker Solutions | GUI Apps | Online Converters |
 | --- | --- | --- | --- | --- |
-| **Storage Size** | **~20 KB** | ~5.0 GB | ~100+ MB | 0 MB |
+| **Storage Size** | **~25 KB** | ~5.0 GB | ~100+ MB | 0 MB |
 | **Offline Use** | Yes | Yes | Yes | No |
-| **All-in-One Capability** | All files | Yes | No | Yes |
-| **Speed & Performance** | Native & Fast | Containerized overhead | Native | Depends on internet |
 | **Privacy** | 100% Local | 100% Local | 100% Local | Uploads your files |
+| **Performance** | Native & Fast | Containerized overhead | Native | Depends on internet |
 
 ---
 
 ## 📂 Supported Formats
 
-TConvert automatically detects your file type and routes it to the correct engine. Here is what it can handle:
+TConvert detects your file type and routes it to the appropriate engine:
 
 | Category | Supported Formats | Engine Used |
 | --- | --- | --- |
@@ -91,50 +91,46 @@ TConvert automatically detects your file type and routes it to the correct engin
 | 📝 **Text** | `md`, `txt`, `rtf` | `Pandoc` |
 | 📦 **Archives** | `zip`, `cbz`, `tar`, `tar.gz`, `tar.bz2`, `tar.xz` | `Native Linux (zip/tar)` |
 
-*(Note: You can type manual extensions outside this list, and TConvert will try its best to process them!)*
-
 ---
 
-## 🚀 Installation
+## 🚀 Installation & Updating
 
-Once you have installed the dependencies (see top of page), it takes 10 seconds to install TConvert on your Linux/macOS machine:
+**Installation:**
+Run this single command to download TConvert, make it executable, and move it to your system binaries:
 
 ```bash
-# 1. Download the script
-wget [https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert](https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert)
-
-# 2. Make it executable
-chmod +x tconvert
-
-# 3. Move it to your bin folder
-sudo mv tconvert /usr/local/bin/
+sudo curl -L "[https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert](https://raw.githubusercontent.com/mohamedmohsenofficial/tconvert/main/tconvert)" -o /usr/local/bin/tconvert && sudo chmod +x /usr/local/bin/tconvert
 
 ```
+
+**Updating:**
+TConvert features a built-in auto-updater. Every time you run the script, it checks the repository. If a new version is available, it will automatically download and apply the update for you.
 
 ---
 
 ## 💻 How to Use
 
-Simply open your terminal in any directory and type:
+Open your terminal in the folder containing your file and run:
 
 ```bash
 tconvert
 
 ```
 
-**The interactive menu will guide you step-by-step:**
+**The interactive menu will guide you:**
 
 1. Enter your file name (e.g., `video.mp4`).
 2. Choose to **Convert** or **Compress**.
-3. Select your target format from a numbered list.
-4. Set your desired compression method (By % or MB).
-5. Sit back and watch the beautiful, real-time progress bar!
+3. Select your target format.
+4. Set your desired compression method (By %, or target exact KB/MB/GB).
+5. (Optional) Apply advanced settings like muting audio, preserving FPS, or trimming media length.
+6. The script processes your file and provides a detailed results summary.
 
 ---
 
-## 📜 License & Credits
+## 📜 License & Links
 
-* **MIT License:** Free to use, modify, and distribute.
+* **License:** [MIT License](https://www.google.com/search?q=LICENSE)
 * **GitHub:** [@mohamedmohsenofficial](https://github.com/mohamedmohsenofficial)
 * **LinkedIn:** [Mohamed Mohsen](https://www.linkedin.com/in/mohamedmohsenofficial)
 
@@ -142,18 +138,6 @@ tconvert
 
 ## 💖 Support
 
-If you find this project useful, consider supporting its development. Every contribution helps improve features, maintain the project, and keep it accessible for everyone. 🌍✨
+If this tool saves you time or simplifies your workflow, consider supporting its development.
 
-<p align="left">
-  <a href="https://www.buymeacoffee.com/mohsenofficial" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" width="200">
-  </a>
-</p>
-
----
-
-Built for my own needs, shared for the community. If it happens to help someone else, then it has done more than I originally intended
-
-Built with passion, curiosity, countless hours of learning, and a deep love for open-source software.
-
-Thank you for using this project and being part of its journey. 🤟🏼😘
+Built for my own needs, shared with the community. Thank you for using TConvert.
